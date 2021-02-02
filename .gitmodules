@@ -1,0 +1,3 @@
+[submodule "AFLNet_Legion"]
+	path = AFLNet_Legion
+	url = git@github.com:Alan32Liu/AFLNet_Legion.git
