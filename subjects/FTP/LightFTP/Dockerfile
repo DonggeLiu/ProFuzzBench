@@ -15,6 +15,25 @@ RUN apt-get -y update && \
     net-tools \
     vim
 
+# Install dependencies for AFLNet_MCTS
+RUN cp /etc/apt/sources.list /etc/apt/sources.list~ \
+    && sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list \
+    && apt update --fix-missing \
+    && apt -y install libglib2.0-dev cmake vim tzdata gdb libc6-dbg dpkg-dev libgnutls28-dev \
+    && sed -ri '/^# deb-src .* xenial(-updates){0,1} main restricted$/s/^# //g' /etc/apt/sources.list \
+    # && apt-get update \
+    && mkdir -p /opt/src \
+    && cd /opt/src \
+    && apt source libc6 \
+    && mkdir -p /build/glibc-e6zv40/ \
+    && ln -s /opt/src/glibc-2.23 /build/glibc-e6zv40/ \
+    && mkdir AFLNet_MCTS
+# Set the timezone of docker for AFLNET_MCTS loggings
+RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime
+
+# Set the environment for AFLNET_MCTS
+ENV TZ=Australia/Melbourne
+
 # Add a new user ubuntu, pass: ubuntu
 RUN groupadd ubuntu && \
     useradd -rm -d /home/ubuntu -s /bin/bash -g ubuntu -G sudo -u 1000 ubuntu -p "$(openssl passwd -1 ubuntu)"
@@ -37,11 +56,20 @@ RUN git clone https://github.com/profuzzbench/aflnwe.git && \
     make clean all && \
     cd llvm_mode && make
 
+# Set up AFLNET_MCTSs
+# TODO: support AFLNet_MCTS natively
+#RUN git clone https://github.com/Alan32Liu/AFLNet_MCTS.git aflnet && \
+#    cd aflnet && \
+#    make clean all && \
+#    cd llvm_mode && make
+
 # Set up environment variables for AFLNet
 ENV WORKDIR="/home/ubuntu/experiments"
 ENV AFLNET="/home/ubuntu/aflnet"
 ENV PATH="${PATH}:${AFLNET}:/home/ubuntu/.local/bin:${WORKDIR}"
 ENV AFL_PATH="${AFLNET}"
+ENV AFL_NET="${AFLNET}"
+
 ENV AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1 \
     AFL_SKIP_CPUFREQ=1 \
     AFL_NO_AFFINITY=1
