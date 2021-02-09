@@ -52,10 +52,10 @@ WORKDIR /home/ubuntu
 ENV LLVM_CONFIG="llvm-config-3.8"
 
 # Set up fuzzers
-RUN git clone https://github.com/profuzzbench/aflnet.git && \
-    cd aflnet && \
-    make clean all && \
-    cd llvm_mode && make
+#RUN git clone https://github.com/profuzzbench/aflnet.git && \
+#    cd aflnet && \
+#    make clean all && \
+#    cd llvm_mode && make
 
 RUN git clone https://github.com/profuzzbench/aflnwe.git && \
     cd aflnwe && \
@@ -64,10 +64,10 @@ RUN git clone https://github.com/profuzzbench/aflnwe.git && \
 
 # Set up AFLNET_MCTSs
 # TODO: support AFLNet_MCTS natively
-#RUN git clone https://github.com/Alan32Liu/AFLNet_MCTS.git aflnet && \
-#    cd aflnet && \
-#    make clean all && \
-#    cd llvm_mode && make
+RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/AFLNet_Legion.git aflnet && \
+    cd aflnet && \
+    make clean all && \
+    cd llvm_mode && make
 
 # Set up environment variables for AFLNet
 ENV WORKDIR="/home/ubuntu/experiments"
