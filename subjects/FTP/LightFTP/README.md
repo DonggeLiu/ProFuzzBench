@@ -9,7 +9,7 @@ The following commands create a docker image tagged lightftp. The image should h
 ```bash
 cd $PFBENCH
 cd subjects/FTP/LightFTP
-docker build . -t lightftp
+docker build --no-cache --rm -t lightftp --build-arg USR=<username> --build-arg PSW=<password> . 
 ```
 
 ## Step-2. Run fuzzing
