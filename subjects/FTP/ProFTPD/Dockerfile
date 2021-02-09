@@ -1,5 +1,10 @@
 FROM ubuntu:16.04
 
+ARG USR
+ARG PSW
+
+RUN echo $USR && echo $PSW
+
 # Install common dependencies
 RUN apt-get -y update && \
     apt-get -y install sudo \ 
@@ -16,6 +21,25 @@ RUN apt-get -y update && \
     vim \
     ftp
 
+# Install dependencies for AFLNet_MCTS
+RUN cp /etc/apt/sources.list /etc/apt/sources.list~ \
+    && sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list \
+    && apt update --fix-missing \
+    && apt -y install libglib2.0-dev cmake vim tzdata gdb libc6-dbg dpkg-dev libgnutls28-dev \
+    && sed -ri '/^# deb-src .* xenial(-updates){0,1} main restricted$/s/^# //g' /etc/apt/sources.list \
+    # && apt-get update \
+    && mkdir -p /opt/src \
+    && cd /opt/src \
+    && apt source libc6 \
+    && mkdir -p /build/glibc-e6zv40/ \
+    && ln -s /opt/src/glibc-2.23 /build/glibc-e6zv40/ \
+    && mkdir AFLNet_MCTS
+# Set the timezone of docker for AFLNET_MCTS loggings
+RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime
+
+# Set the environment for AFLNET_MCTS
+ENV TZ=Australia/Melbourne
+
 # Add a new user ubuntu, pass: ubuntu
 RUN groupadd ubuntu && \
     useradd -rm -d /home/ubuntu -s /bin/bash -g ubuntu -G sudo -u 1000 ubuntu -p "$(openssl passwd -1 ubuntu)"
@@ -27,7 +51,12 @@ WORKDIR /home/ubuntu
 ENV LLVM_CONFIG="llvm-config-3.8"
 
 # Set up fuzzers
-RUN git clone https://github.com/profuzzbench/aflnet.git && \
+#RUN git clone https://github.com/profuzzbench/aflnet.git && \
+#    cd aflnet && \
+#    make clean all && \
+#    cd llvm_mode && make
+
+RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/AFLNet_Legion.git aflnet && \
     cd aflnet && \
     make clean all && \
     cd llvm_mode && make
@@ -40,6 +69,7 @@ RUN git clone https://github.com/profuzzbench/aflnwe.git && \
 # Set up environment variables for AFLNet
 ENV WORKDIR="/home/ubuntu/experiments"
 ENV AFLNET="/home/ubuntu/aflnet"
+ENV AFL_NET="${AFLNET}"
 ENV PATH="${PATH}:${AFLNET}:/home/ubuntu/.local/bin:${WORKDIR}:${WORKDIR}/proftpd"
 ENV AFL_PATH="${AFLNET}"
 ENV AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1 \

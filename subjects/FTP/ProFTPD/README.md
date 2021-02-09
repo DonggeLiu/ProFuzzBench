@@ -9,7 +9,7 @@ The following commands create a docker image tagged ProFTPD. The image should ha
 ```bash
 cd $PFBENCH
 cd subjects/FTP/ProFTPD
-docker build . -t proftpd
+docker build --no-cache --rm -t proftpd --build-arg USR=<username> --build-arg PSW=<password> .
 ```
 
 ## Step-2. Run fuzzing
