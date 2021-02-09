@@ -1,5 +1,11 @@
 FROM ubuntu:16.04
 
+ARG USR
+ARG PSW
+
+RUN echo $USR && echo $PSW
+
+
 # Install common dependencies
 RUN apt-get -y update && \
     apt-get -y install sudo \ 
