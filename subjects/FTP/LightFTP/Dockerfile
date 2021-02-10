@@ -21,23 +21,20 @@ RUN apt-get -y update && \
     net-tools \
     vim
 
-# Install dependencies for AFLNet_MCTS
+# Install dependencies for AFLNet_Legion
 RUN cp /etc/apt/sources.list /etc/apt/sources.list~ \
     && sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list \
-    && apt update --fix-missing \
-    && apt -y install libglib2.0-dev cmake vim tzdata gdb libc6-dbg dpkg-dev libgnutls28-dev \
     && sed -ri '/^# deb-src .* xenial(-updates){0,1} main restricted$/s/^# //g' /etc/apt/sources.list \
-    # && apt-get update \
+    && apt update \
+    && apt -y install libglib2.0-dev cmake vim tzdata gdb libc6-dbg dpkg-dev libgnutls28-dev \
     && mkdir -p /opt/src \
     && cd /opt/src \
     && apt source libc6 \
     && mkdir -p /build/glibc-e6zv40/ \
-    && ln -s /opt/src/glibc-2.23 /build/glibc-e6zv40/ \
-    && mkdir AFLNet_MCTS
-# Set the timezone of docker for AFLNET_MCTS loggings
-RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime
+    && ln -s /opt/src/glibc-2.23 /build/glibc-e6zv40/
 
-# Set the environment for AFLNET_MCTS
+# Set the timezone of docker for AFLNet_Legion loggings
+RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime
 ENV TZ=Australia/Melbourne
 
 # Add a new user ubuntu, pass: ubuntu
@@ -52,19 +49,18 @@ WORKDIR /home/ubuntu
 ENV LLVM_CONFIG="llvm-config-3.8"
 
 # Set up fuzzers
-#RUN git clone https://github.com/profuzzbench/aflnet.git && \
-#    cd aflnet && \
-#    make clean all && \
-#    cd llvm_mode && make
+RUN git clone https://github.com/profuzzbench/aflnet.git && \
+    cd aflnet && \
+    make clean all && \
+    cd llvm_mode && make
 
 RUN git clone https://github.com/profuzzbench/aflnwe.git && \
     cd aflnwe && \
     make clean all && \
     cd llvm_mode && make
 
-# Set up AFLNET_MCTSs
-# TODO: support AFLNet_MCTS natively
-RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/AFLNet_Legion.git aflnet && \
+# Set up AFLNet_Legion
+RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/AFLNet_Legion.git && \
     cd aflnet && \
     make clean all && \
     cd llvm_mode && make
