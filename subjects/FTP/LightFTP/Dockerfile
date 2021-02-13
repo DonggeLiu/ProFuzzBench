@@ -71,6 +71,7 @@ ENV AFLNET="/home/ubuntu/aflnet"
 ENV PATH="${PATH}:${AFLNET}:/home/ubuntu/.local/bin:${WORKDIR}"
 ENV AFL_PATH="${AFLNET}"
 ENV AFL_NET="${AFLNET}"
+ENV LOG_PATH="${WORKDIR}/LightFTP/Source/Release/log.ansi"
 
 ENV AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1 \
     AFL_SKIP_CPUFREQ=1 \
