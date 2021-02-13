@@ -39,6 +39,7 @@ index=1
 for id in ${cids[@]}; do
   printf "\n${FUZZER^^}: Collecting results from container ${id}"
   docker cp ${id}:/home/ubuntu/experiments/${OUTDIR}.tar.gz ${SAVETO}/${OUTDIR}_${index}.tar.gz > /dev/null
+  docker cp ${id}:home/ubuntu/experiments/${OUTDIR}/../log.ansi ${SAVETO}/log.ansi > /dev/null
   index=$((index+1))
 done
 
