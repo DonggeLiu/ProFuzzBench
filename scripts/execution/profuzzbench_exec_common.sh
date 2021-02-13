@@ -10,6 +10,9 @@ OPTIONS=$6    #all configured options for fuzzing
 TIMEOUT=$7    #time for fuzzing
 SKIPCOUNT=$8  #used for calculating coverage over time. e.g., SKIPCOUNT=5 means we run gcovr after every 5 test cases
 
+# Log the starting time
+date
+
 # Make sure the result folder exists
 mkdir -p "${SAVETO}"
 
