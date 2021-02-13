@@ -19,6 +19,8 @@ cids=()
 #create one container for each run
 for i in $(seq 1 $RUNS); do
   id=$(docker run --cpus=1 -d -it $DOCIMAGE /bin/bash -c "cd ${WORKDIR} && run ${FUZZER} ${OUTDIR} '${OPTIONS}' ${TIMEOUT} ${SKIPCOUNT}")
+  LOG_PATH=$(docker exec "${id}" bash -c 'echo "$LOG_PATH"')
+  echo "${id}:${LOG_PATH}"
   cids+=(${id::12}) #store only the first 12 characters of a container ID
 done
 
@@ -39,7 +41,6 @@ index=1
 for id in ${cids[@]}; do
   printf "\n${FUZZER^^}: Collecting results from container ${id}"
   docker cp ${id}:/home/ubuntu/experiments/${OUTDIR}.tar.gz ${SAVETO}/${OUTDIR}_${index}.tar.gz > /dev/null
-  LOG_PATH=$(docker exec "${id}" bash -c 'echo "$LOG_PATH"')
   echo "${id}:${LOG_PATH}"
   echo "${SAVETO}/log_${index}.ansi"
   docker cp "${id}:${LOG_PATH}" "${SAVETO}/log_${index}.ansi" > /dev/null
