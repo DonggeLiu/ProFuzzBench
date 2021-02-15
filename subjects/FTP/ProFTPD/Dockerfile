@@ -42,6 +42,7 @@ ENV TZ=Australia/Melbourne
 RUN groupadd ubuntu && \
     useradd -rm -d /home/ubuntu -s /bin/bash -g ubuntu -G sudo -u 1000 ubuntu -p "$(openssl passwd -1 ubuntu)"
 
+# Use ubuntu as default username
 USER ubuntu
 WORKDIR /home/ubuntu
 
@@ -60,17 +61,18 @@ RUN git clone https://github.com/profuzzbench/aflnwe.git && \
     cd llvm_mode && make
 
 # Set up AFLNet_Legion
-RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/AFLNet_Legion.git && \
-    cd aflnet && \
+RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/AFLNet_Legion.git aflnet_legion && \
+    cd aflnet_legion && \
     make clean all && \
     cd llvm_mode && make
 
 # Set up environment variables for AFLNet
 ENV WORKDIR="/home/ubuntu/experiments"
 ENV AFLNET="/home/ubuntu/aflnet"
-ENV AFL_NET="${AFLNET}"
 ENV PATH="${PATH}:${AFLNET}:/home/ubuntu/.local/bin:${WORKDIR}:${WORKDIR}/proftpd"
 ENV AFL_PATH="${AFLNET}"
+ENV AFL_NET="${AFLNET}"
+ENV LOG_PATH="${WORKDIR}/LightFTP/Source/Release/log.ansi"
 
 ENV AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1 \
     AFL_SKIP_CPUFREQ=1 \
