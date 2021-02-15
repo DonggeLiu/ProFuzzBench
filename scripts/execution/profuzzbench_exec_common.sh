@@ -46,7 +46,7 @@ for id in ${cids[@]}; do
   docker cp ${id}:/home/ubuntu/experiments/${OUTDIR}.tar.gz ${SAVETO}/${OUTDIR}_${index}.tar.gz > /dev/null
   echo "${id}:${LOG_PATH}"
   echo "${SAVETO}/log_${index}.ansi"
-  docker cp "${id}:${LOG_PATH}" "${SAVETO}/log_${index}.ansi" > /dev/null
+  docker cp "${id}:${LOG_PATH}" "${SAVETO}/log_${FUZZER}_${index}.ansi" > /dev/null
   index=$((index+1))
 done
 
