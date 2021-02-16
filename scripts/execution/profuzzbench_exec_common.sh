@@ -22,7 +22,7 @@ cids=()
 #create one container for each run
 for i in $(seq 1 $RUNS); do
   id=$(docker run --cpus=1 -d -it $DOCIMAGE /bin/bash -c "cd ${WORKDIR} && run ${FUZZER} ${OUTDIR} '${OPTIONS}' ${TIMEOUT} ${SKIPCOUNT}")
-  LOG_PATH=$(docker exec "${id}" bash -c 'echo "$LOG_PATH"')
+  LOG_PATH=$(docker exec "${id}" bash -c 'echo "$AFLNET_LEGION_LOG"')
   echo "${id}:${LOG_PATH}"
   cids+=(${id::12}) #store only the first 12 characters of a container ID
 done
