@@ -82,5 +82,5 @@ for key, grp in mean_df.groupby(['fuzzer', 'cov_type']):
       axes[1, 1].set_title('Line coverage over time in percentage')
       axes[1, 1].set_ylim([0,100])
 
-plt.legend(('AFLNet', 'AFLNwe'), loc='upper left')
+plt.legend(('AFLNet', 'AFLNwe'), loc='best')
 plt.show()
