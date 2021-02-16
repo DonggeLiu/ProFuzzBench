@@ -8,6 +8,7 @@ from matplotlib import pyplot as plt
 import pandas as pd
 
 FUZZERS = ['AFLNet', 'AFLNet_Legion']
+#FUZZERS = ['AFLNet_Legion']
 
 
 def main(csv_file, put, runs, cut_off, step, out_file):
@@ -80,7 +81,7 @@ def main(csv_file, put, runs, cut_off, step, out_file):
       axes[1, 1].set_ylabel('Line coverage (%)')
 
   for i, ax in enumerate(fig.axes):
-    ax.legend(tuple(FUZZERS), loc='upper left')
+    ax.legend(tuple(FUZZERS), loc='best')
     ax.grid()
 
   #Save to file
