@@ -8,6 +8,7 @@ from matplotlib import pyplot as plt
 import pandas as pd
 
 FUZZERS = ['AFLNet', 'AFLNet_Legion']
+#FUZZERS = ['AFLNet_Legion']
 
 
 def main(csv_file, put, runs, cut_off, step, out_file):
