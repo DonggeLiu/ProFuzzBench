@@ -1,0 +1,40 @@
+#!/usr/bin/env sh
+
+ONLY_LEGION=$1  # 0: Both AFLNet and AFLNet_Legion; 1: Just AFLNet_Legion
+PRE_RESULTS=$2  # Previous csv results (e.g. AFLNet) to reuse
+TIME_MINUTE=$3  # Experiment time in minutes
+RESULT_DIR=$4   # Where to save experiment results
+SUBJECT=$5      # Experiment target
+
+#declare -i TIME_SECONDS
+TIME_SECONDS=$((TIME_MINUTE * 60))
+
+# Make sure the result folder exists
+mkdir -p "${RESULT_DIR}"
+
+# Run fuzzing
+if [ ! "${ONLY_LEGION}" ]; then
+  echo "${TIME_SECONDS}"
+  profuzzbench_exec_common.sh "${SUBJECT}" 4 "${RESULT_DIR}" aflnet out-"${SUBJECT}"-aflnet "-P FTP -D 10000 -q 3 -s 3 -E -K -c ./ftpclean.sh" "${TIME_SECONDS}" 5
+fi
+profuzzbench_exec_common.sh "${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh" "${TIME_SECONDS}" 5
+
+
+# Collect the results
+(
+  cd "${RESULT_DIR}" || exit
+  if [ "${ONLY_LEGION}" ]; then
+    profuzzbench_generate_csv.sh "${SUBJECT}" 4 aflnet results.csv 0
+  else
+    cp "${PRE_RESULTS}/results.csv" .
+  fi
+  profuzzbench_generate_csv.sh "${SUBJECT}" 4 aflnet_legion results.csv 1
+)
+
+
+# Collect the results
+(
+  cd "${RESULT_DIR}" || exit
+  profuzzbench_plot.py -i results.csv -p "${SUBJECT}" -r 4 -c "${TIME_MINUTE}" -s 1 -o cov_over_time.png
+)
+
