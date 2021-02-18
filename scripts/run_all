@@ -3,8 +3,8 @@
 ONLY_LEGION=$1  # 0: Both AFLNet and AFLNet_Legion; 1: Just AFLNet_Legion
 PRE_RESULTS=$2  # Previous csv results (e.g. AFLNet) to reuse
 TIME_MINUTE=$3  # Experiment time in minutes
-RESULT_DIR=$4   # Where to save experiment results
-SUBJECT=$5      # Experiment target
+SUBJECT=$4      # Experiment target
+RESULT_DIR=$(date +"%Y-%m-%d_%H%M%S")  # Where to save experiment results
 
 #declare -i TIME_SECONDS
 TIME_SECONDS=$((TIME_MINUTE * 60))
