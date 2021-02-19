@@ -15,14 +15,14 @@ mkdir -p "${RESULT_DIR}"
 # Run fuzzing
 echo "Fuzzing time: ${TIME_SECONDS}"
 if [ "${ONLY_LEGION}" -eq "0" ]; then
-  echo "profuzzbench_exec_common.sh donggeliu/${SUBJECT} 4 ${RESULT_DIR} aflnet out-${SUBJECT}-aflnet -P FTP -D 10000 -q 3 -s 3 -E -K -c ./ftpclean.sh ${TIME_SECONDS} 5"
-#  profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet out-"${SUBJECT}"-aflnet "-P FTP -D 10000 -q 3 -s 3 -E -K -c ./ftpclean.sh" "${TIME_SECONDS}" 5 &
-  echo "profuzzbench_exec_common.sh donggeliu/${SUBJECT} 4 ${RESULT_DIR} aflnet_legion out-${SUBJECT}-aflnet_legion -P FTP -D 10000 -q 3 -s 3 -E -K -c ./ftpclean.sh ${TIME_SECONDS} 5"
-#  profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh" "${TIME_SECONDS}" 5 &
+  #echo "profuzzbench_exec_common.sh donggeliu/${SUBJECT} 4 ${RESULT_DIR} aflnet out-${SUBJECT}-aflnet -P FTP -D 10000 -q 3 -s 3 -E -K -c ./ftpclean.sh ${TIME_SECONDS} 5" &
+  profuzzbench_exec_common.sh donggeliu/${SUBJECT} 4 ${RESULT_DIR} aflnet out-${SUBJECT}-aflnet "-P FTP -D 10000 -q 3 -s 3 -E -K -c ./ftpclean.sh" ${TIME_SECONDS} 5 &
+  #echo "profuzzbench_exec_common.sh donggeliu/${SUBJECT} 4 ${RESULT_DIR} aflnet_legion out-${SUBJECT}-aflnet_legion -P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh ${TIME_SECONDS} 5" &
+  profuzzbench_exec_common.sh donggeliu/${SUBJECT} 4 ${RESULT_DIR} aflnet_legion out-${SUBJECT}-aflnet_legion "-P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh" ${TIME_SECONDS} 5 &
+  wait
 else
-  profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh" "${TIME_SECONDS}" 5 &
+  profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh" "${TIME_SECONDS}" 5 
 fi
-wait
 
 # Collect the results
 (
@@ -30,17 +30,16 @@ wait
   if [ "${ONLY_LEGION}" -eq "1" ]; then
     cp "../${PRE_RESULTS}/results.csv" .
   else
-    profuzzbench_generate_csv.sh "${SUBJECT}" 4 aflnet results.csv 0 &
+    profuzzbench_generate_csv.sh "${SUBJECT}" 4 aflnet results.csv 0 
   fi
-  wait
-  profuzzbench_generate_csv.sh "${SUBJECT}" 4 aflnet_legion results.csv 1 &
+  profuzzbench_generate_csv.sh "${SUBJECT}" 4 aflnet_legion results.csv 1 
 )
 
-wait
 
 # Collect the results
 (
   cd "${RESULT_DIR}" || exit
+  echo "Plotting time: ${TIME_MINUTE}"
   profuzzbench_plot.py -i results.csv -p "${SUBJECT}" -r 4 -c "${TIME_MINUTE}" -s 1 -o cov_over_time.png
 )
 

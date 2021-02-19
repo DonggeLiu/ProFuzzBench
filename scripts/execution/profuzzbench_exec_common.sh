@@ -16,6 +16,8 @@ date
 # Make sure the result folder exists
 mkdir -p "${SAVETO}"
 
+echo "${TIMEOUT}"
+
 #keep all container ids
 cids=()
 
@@ -24,7 +26,7 @@ for i in $(seq 1 $RUNS); do
   id=$(docker run --cpus=1 -d -it $DOCIMAGE /bin/bash -c "cd ${WORKDIR} && run ${FUZZER} ${OUTDIR} '${OPTIONS}' ${TIMEOUT} ${SKIPCOUNT}")
   if [ "${FUZZER}" == "aflnet_legion" ]; then
     LOG_PATH=$(docker exec "${id}" bash -c 'echo "$AFLNET_LEGION_LOG"')
-    echo "${id}:${LOG_PATH}"
+    #echo "${id}:${LOG_PATH}"
   fi
   cids+=(${id::12}) #store only the first 12 characters of a container ID
 done
@@ -53,3 +55,5 @@ for id in ${cids[@]}; do
 done
 
 printf "\n${FUZZER^^}: I am done!"
+
+date
