@@ -15,9 +15,11 @@ mkdir -p "${RESULT_DIR}"
 # Run fuzzing
 echo "${TIME_SECONDS}"
 if [ "${ONLY_LEGION}" -eq "0" ]; then
-  profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet out-"${SUBJECT}"-aflnet "-P FTP -D 10000 -q 3 -s 3 -E -K -c ./ftpclean.sh" "${TIME_SECONDS}" 5
+  profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet out-"${SUBJECT}"-aflnet "-P FTP -D 10000 -q 3 -s 3 -E -K -c ./ftpclean.sh" "${TIME_SECONDS}" 5 &
+  profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh" "${TIME_SECONDS}" 5
+else
+  profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh" "${TIME_SECONDS}" 5
 fi
-profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh" "${TIME_SECONDS}" 5
 
 
 # Collect the results
