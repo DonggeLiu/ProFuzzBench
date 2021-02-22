@@ -9,23 +9,23 @@ RESULT_DIR=$(date +"%Y-%m-%d_%H%M%S")  # Where to save experiment results
 #declare -i TIME_SECONDS
 TIME_SECONDS=$((TIME_MINUTE * 60))
 
-# Fuzing options
-if [ "${SUBJECT}" = "lightftp" ]; then
-  AFLNET_OPTIONS='"-P FTP -D 10000 -q 3 -s 3 -E -K -c ./ftpclean.sh"'
-  LEGION_OPTIONS='"-P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh"'
-elif  [ "${SUBJECT}" = "proftpd" ]; then
-  AFLNET_OPTIONS=\""-t 1000+ -m none -P FTP -D 10000 -q 3 -s 3 -E -K -c clean"\"
-  LEGION_OPTIONS=\""-t 1000+ -m none -P FTP -D 10000 -q 4 -s 4 -E -K -c clean"\"
-elif  [ "${SUBJECT}" = "openssl" ]; then
-  AFLNET_OPTIONS='"-P TLS -D 10000 -q 3 -s 3 -E -K -R -W 100"'
-  LEGION_OPTIONS='"-P TLS -D 10000 -q 4 -s 4 -E -K -R -W 100"'
-elif  [ "${SUBJECT}" = "openssh" ]; then
-  AFLNET_OPTIONS='"-P SSH -D 10000 -q 3 -s 3 -E -K -W 10"'
-  LEGION_OPTIONS='"-P SSH -D 10000 -q 4 -s 4 -E -K -W 10"'
-else
-  echo "Invalid subject: ${SUBJECT}"
-  exit 1
-fi
+## Fuzing options
+#if [ "${SUBJECT}" = "lightftp" ]; then
+#  AFLNET_OPTIONS='"-P FTP -D 10000 -q 3 -s 3 -E -K -c ./ftpclean.sh"'
+#  LEGION_OPTIONS='"-P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh"'
+#elif  [ "${SUBJECT}" = "proftpd" ]; then
+#  AFLNET_OPTIONS="-t 1000+ -m none -P FTP -D 10000 -q 3 -s 3 -E -K -c clean"
+#  LEGION_OPTIONS="-t 1000+ -m none -P FTP -D 10000 -q 4 -s 4 -E -K -c clean"
+#elif  [ "${SUBJECT}" = "openssl" ]; then
+#  AFLNET_OPTIONS='"-P TLS -D 10000 -q 3 -s 3 -E -K -R -W 100"'
+#  LEGION_OPTIONS='"-P TLS -D 10000 -q 4 -s 4 -E -K -R -W 100"'
+#elif  [ "${SUBJECT}" = "openssh" ]; then
+#  AFLNET_OPTIONS='"-P SSH -D 10000 -q 3 -s 3 -E -K -W 10"'
+#  LEGION_OPTIONS='"-P SSH -D 10000 -q 4 -s 4 -E -K -W 10"'
+#else
+#  echo "Invalid subject: ${SUBJECT}"
+#  exit 1
+#fi
 
 # Make sure the result folder exists
 mkdir -p "${RESULT_DIR}"
@@ -33,14 +33,44 @@ mkdir -p "${RESULT_DIR}"
 # Run fuzzing
 echo "Fuzzing time: ${TIME_SECONDS}"
 if [ "${ONLY_LEGION}" -eq "0" ]; then
-  echo "profuzzbench_exec_common.sh donggeliu/${SUBJECT} 4 ${RESULT_DIR} aflnet out-${SUBJECT}-aflnet ${AFLNET_OPTIONS} ${TIME_SECONDS} 5"
+  if [ "${SUBJECT}" = "lightftp" ]; then
+    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet out-"${SUBJECT}"-aflnet "-P FTP -D 10000 -q 3 -s 3 -E -K -c ./ftpclean.sh" "${TIME_SECONDS}" 5 &
+    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet "-P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh" "${TIME_SECONDS}" 5 &
+    wait
+  elif [ "${SUBJECT}" = "proftpd" ]; then
+    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet out-"${SUBJECT}"-aflnet "-t 1000+ -m none -P FTP -D 10000 -q 3 -s 3 -E -K -c clean" "${TIME_SECONDS}" 5 &
+    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet "-t 1000+ -m none -P FTP -D 10000 -q 4 -s 4 -E -K -c clean" "${TIME_SECONDS}" 5 &
+    wait
+  elif [ "${SUBJECT}" = "openssl" ]; then
+    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet out-"${SUBJECT}"-aflnet "-P TLS -D 10000 -q 3 -s 3 -E -K -R -W 100" "${TIME_SECONDS}" 5 &
+    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet "-P TLS -D 10000 -q 4 -s 4 -E -K -R -W 100" "${TIME_SECONDS}" 5 &
+    wait
+  elif [ "${SUBJECT}" = "openssh" ]; then
+    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet out-"${SUBJECT}"-aflnet "-P SSH -D 10000 -q 3 -s 3 -E -K -W 10" "${TIME_SECONDS}" 5 &
+    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet "-P SSH -D 10000 -q 4 -s 4 -E -K -W 10" "${TIME_SECONDS}" 5 &
+    wait
+  else
+    echo "Invalid subject: ${SUBJECT}"
+    exit 1
+  fi
+  #echo "profuzzbench_exec_common.sh donggeliu/${SUBJECT} 4 ${RESULT_DIR} aflnet out-${SUBJECT}-aflnet ${AFLNET_OPTIONS} ${TIME_SECONDS} 5"
   #profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet out-"${SUBJECT}"-aflnet "${AFLNET_OPTIONS}" "${TIME_SECONDS}" 5 &
-  #profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet out-"${SUBJECT}"-aflnet "-t 1000+ -m none -P FTP -D 10000 -q 3 -s 3 -E -K -c clean" "${TIME_SECONDS}" 5 &
   #profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "${LEGION_OPTIONS}" "${TIME_SECONDS}" 5 &
-  #profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-t 1000+ -m none -P FTP -D 10000 -q 4 -s 4 -E -K -c clean" "${TIME_SECONDS}" 5 &
-  wait
+  #wait
 else
-  profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion ${AFLNET_OPTIONS} "${TIME_SECONDS}" 5 
+  profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion ${AFLNET_OPTIONS} "${TIME_SECONDS}" 5
+    if [ "${SUBJECT}" = "lightftp" ]; then
+    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet "-P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh" "${TIME_SECONDS}" 5
+  elif [ "${SUBJECT}" = "proftpd" ]; then
+    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet "-t 1000+ -m none -P FTP -D 10000 -q 4 -s 4 -E -K -c clean" "${TIME_SECONDS}" 5
+  elif [ "${SUBJECT}" = "openssl" ]; then
+    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet "-P TLS -D 10000 -q 4 -s 4 -E -K -R -W 100" "${TIME_SECONDS}" 5
+  elif [ "${SUBJECT}" = "openssh" ]; then
+    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet "-P SSH -D 10000 -q 4 -s 4 -E -K -W 10" "${TIME_SECONDS}" 5
+  else
+    echo "Invalid subject: ${SUBJECT}"
+    exit 1
+  fi
 fi
 
 # Collect the results
