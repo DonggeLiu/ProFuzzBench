@@ -6,8 +6,11 @@ TIME_MINUTE=$3  # Experiment time in minutes
 SUBJECT=$4      # Experiment target
 RESULT_DIR=$(date +"%Y-%m-%d_%H%M%S")  # Where to save experiment results
 
-#declare -i TIME_SECONDS
+# Convert the minute to seconds
 TIME_SECONDS=$((TIME_MINUTE * 60))
+
+# Confirm the directory to save results
+echo "Results directory: ${RESULT_DIR}"
 
 ## Fuzing options
 #if [ "${SUBJECT}" = "lightftp" ]; then
@@ -31,7 +34,8 @@ TIME_SECONDS=$((TIME_MINUTE * 60))
 mkdir -p "${RESULT_DIR}"
 
 # Run fuzzing
-echo "Fuzzing time: ${TIME_SECONDS}"
+## Confirm the experiment duration
+echo "Fuzzing time: ${TIME_SECONDS} seconds"
 if [ "${ONLY_LEGION}" -eq "0" ]; then
   if [ "${SUBJECT}" = "lightftp" ]; then
     profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet out-"${SUBJECT}"-aflnet "-P FTP -D 10000 -q 3 -s 3 -E -K -c ./ftpclean.sh" "${TIME_SECONDS}" 5 &
@@ -88,7 +92,7 @@ fi
 # Collect the results
 (
   cd "${RESULT_DIR}" || exit
-  echo "Plotting time: ${TIME_MINUTE}"
+  echo "Plotting time: ${TIME_MINUTE} minutes"
   profuzzbench_plot.py -i results.csv -p "${SUBJECT}" -r 4 -c "${TIME_MINUTE}" -s 1 -o cov_over_time.png
 )
 

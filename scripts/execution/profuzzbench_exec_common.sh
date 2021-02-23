@@ -16,7 +16,7 @@ date
 # Make sure the result folder exists
 mkdir -p "${SAVETO}"
 
-echo "${TIMEOUT}"
+echo "${FUZZER} will run for ${TIMEOUT} seconds"
 
 #keep all container ids
 cids=()
