@@ -13,18 +13,18 @@ TIME_SECONDS=$((TIME_MINUTE * 60))
 echo "Results directory: ${RESULT_DIR}"
 
 ## Fuzing options
-if [ "${SUBJECT}" = "lightftp" ]; then
-  AFLNET_OPTIONS='"-P FTP -D 10000 -q 3 -s 3 -E -K -c ./ftpclean.sh"'
-  LEGION_OPTIONS='"-P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh"'
-elif  [ "${SUBJECT}" = "proftpd" ]; then
-  AFLNET_OPTIONS="-t 1000+ -m none -P FTP -D 10000 -q 3 -s 3 -E -K -c clean"
-  LEGION_OPTIONS="-t 1000+ -m none -P FTP -D 10000 -q 4 -s 4 -E -K -c clean"
-elif  [ "${SUBJECT}" = "openssl" ]; then
-  AFLNET_OPTIONS='"-P TLS -D 10000 -q 3 -s 3 -E -K -R -W 100"'
-  LEGION_OPTIONS='"-P TLS -D 10000 -q 4 -s 4 -E -K -R -W 100"'
-elif  [ "${SUBJECT}" = "openssh" ]; then
-  AFLNET_OPTIONS='"-P SSH -D 10000 -q 3 -s 3 -E -K -W 10"'
-  LEGION_OPTIONS='"-P SSH -D 10000 -q 4 -s 4 -E -K -W 10"'
+#if [ "${SUBJECT}" = "lightftp" ]; then
+#  AFLNET_OPTIONS='"-P FTP -D 10000 -q 3 -s 3 -E -K -c ./ftpclean.sh"'
+#  LEGION_OPTIONS='"-P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh"'
+#elif  [ "${SUBJECT}" = "proftpd" ]; then
+#  AFLNET_OPTIONS="-t 1000+ -m none -P FTP -D 10000 -q 3 -s 3 -E -K -c clean"
+#  LEGION_OPTIONS="-t 1000+ -m none -P FTP -D 10000 -q 4 -s 4 -E -K -c clean"
+#elif  [ "${SUBJECT}" = "openssl" ]; then
+#  AFLNET_OPTIONS='"-P TLS -D 10000 -q 3 -s 3 -E -K -R -W 100"'
+#  LEGION_OPTIONS='"-P TLS -D 10000 -q 4 -s 4 -E -K -R -W 100"'
+#elif  [ "${SUBJECT}" = "openssh" ]; then
+#  AFLNET_OPTIONS='"-P SSH -D 10000 -q 3 -s 3 -E -K -W 10"'
+#  LEGION_OPTIONS='"-P SSH -D 10000 -q 4 -s 4 -E -K -W 10"'
 #else
 #  echo "Invalid subject: ${SUBJECT}"
 #  exit 1
@@ -59,7 +59,7 @@ if [ "${ONLY_LEGION}" -eq "0" ]; then
   fi
   #TODO: Try some minimum examples
 #  echo "profuzzbench_exec_common.sh donggeliu/${SUBJECT} 4 ${RESULT_DIR} aflnet out-${SUBJECT}-aflnet ${AFLNET_OPTIONS} ${TIME_SECONDS} 5"
-  profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet out-"${SUBJECT}"-aflnet ${AFLNET_OPTIONS} "${TIME_SECONDS}" 5 &
+#  profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet out-"${SUBJECT}"-aflnet ${AFLNET_OPTIONS} "${TIME_SECONDS}" 5 &
   #profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "${LEGION_OPTIONS}" "${TIME_SECONDS}" 5 &
   #wait
 else
