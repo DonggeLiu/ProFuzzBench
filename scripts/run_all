@@ -66,13 +66,17 @@ if [ "${ONLY_LEGION}" -eq "0" ]; then
 else
   # profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion ${AFLNET_OPTIONS} "${TIME_SECONDS}" 5
   if [ "${SUBJECT}" = "lightftp" ]; then
-    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-l 0 -p 5 -a -z -r 1.414 -P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh" "${TIME_SECONDS}" 5
+    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-l 0 -p 5 -a -z -r 1.414 -P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh" "${TIME_SECONDS}" 5 &
+    wait
   elif [ "${SUBJECT}" = "proftpd" ]; then
-    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-l 0 -p 5 -a -z -r 1.414 -t 1000+ -m none -P FTP -D 10000 -q 4 -s 4 -E -K -c clean" "${TIME_SECONDS}" 5
+    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-l 0 -p 5 -a -z -r 1.414 -t 1000+ -m none -P FTP -D 10000 -q 4 -s 4 -E -K -c clean" "${TIME_SECONDS}" 5 &
+    wait
   elif [ "${SUBJECT}" = "openssl" ]; then
-    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-l 0 -p 5 -a -z -r 1.414 -P TLS -D 10000 -q 4 -s 4 -E -K -R -W 100" "${TIME_SECONDS}" 5
+    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-l 0 -p 5 -a -z -r 1.414 -P TLS -D 10000 -q 4 -s 4 -E -K -R -W 100" "${TIME_SECONDS}" 5 &
+    wait
   elif [ "${SUBJECT}" = "openssh" ]; then
-    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-l 0 -p 5 -a -z -r 1.414 -P SSH -D 10000 -q 4 -s 4 -E -K -W 10" "${TIME_SECONDS}" 5
+    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-l 0 -p 5 -a -z -r 1.414 -P SSH -D 10000 -q 4 -s 4 -E -K -W 10" "${TIME_SECONDS}" 5 &
+    wait
   else
     echo "Invalid subject: ${SUBJECT}"
     exit 1
