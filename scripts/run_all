@@ -81,10 +81,30 @@ fi
 )
 
 
-# Collect the results
+# ========== Step 5: Plot the results ========== #
 (
   cd "${RESULT_DIR}" || exit
   echo "Plotting time: ${TIME_MINUTE} minutes"
-  profuzzbench_plot.py -i results.csv -p "${SUBJECT}" -r 4 -c "${TIME_MINUTE}" -s 1 -o cov_over_time.png
-)
+  MESSAGE="Duration: ${TIME_MINUTE}min; Log level:${LOG_LVL}; RHO: ${RHO}"
 
+  if [ "${IGN_AST}" = "1" ]; then
+    MESSAGE="${MESSAGE}  Ignore assertions: True;"
+  else
+    MESSAGE="${MESSAGE}  Ignore assertions: False;"
+  fi
+
+  if [ "${FUZZ_M3}" = "1" ]; then
+    MESSAGE="${MESSAGE}  Fuzz M3: True;"
+  else
+    MESSAGE="${MESSAGE}  Fuzz M3: False;"
+  fi
+
+  if [ "${ONLY_LEGION}" = "1" ]; then
+    MESSAGE="${ONLY_LEGION}  Legion Only: True;"
+  else
+    MESSAGE="${ONLY_LEGION}  Legion Only: False;"
+  fi
+
+  profuzzbench_plot.py -i results.csv -p "${SUBJECT}" -r 4 -c "${TIME_MINUTE}" -s 1 -o "${SUBJECT}_${TIME_STAMP}.png" \
+    -m MESSAGE
+)
