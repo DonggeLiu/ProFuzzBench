@@ -3,8 +3,24 @@
 ONLY_LEGION=$1  # 0: Both AFLNet and AFLNet_Legion; 1: Just AFLNet_Legion
 PRE_RESULTS=$2  # Previous csv results (e.g. AFLNet) to reuse
 TIME_MINUTE=$3  # Experiment time in minutes
-SUBJECT=$4      # Experiment target
-RESULT_DIR=$(date +"%Y-%m-%d_%H%M%S")  # Where to save experiment results
+#-l 0 -p 5 -a -z -r 1.414
+LOG_LVL=$4      # Log level
+IGN_AST=$5      # Ignore assertions
+FUZZ_M3=$6      # Fuzz M3
+RHO=$7          # Rho
+SUBJECT=$8      # Experiment target
+TREE_DP=5       # Log tree depth
+
+LEGION_PARAMS="-l ${LOG_LVL} -p ${TREE_DP} -r ${RHO}"
+if [ "${IGN_AST}" = "1" ]; then
+  LEGION_PARAMS="${LEGION_PARAMS} -a"
+fi
+if [ "${FUZZ_M3}" = "1" ]; then
+  LEGION_PARAMS="${LEGION_PARAMS} -z"
+fi
+
+TIME_STAMP=$(date +"%Y-%m-%d_%H%M%S")  # Experiment starting time
+RESULT_DIR="${SUBJECT}_${TIME_MINUTE}_${ONLY_LEGION}_${TIME_STAMP}"  # Where to save experiment results
 
 # TODO: define the params here, make them cmd line params
 # Convert the minute to seconds
