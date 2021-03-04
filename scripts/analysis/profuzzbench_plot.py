@@ -11,7 +11,7 @@ FUZZERS = ['AFLNet', 'AFLNet_Legion']
 #FUZZERS = ['AFLNet_Legion']
 
 
-def main(csv_file, put, runs, cut_off, step, out_file, message):
+def main(csv_file, put, runs, cut_off, step, out_file, message, legion_version):
   #Read the results
   df = read_csv(csv_file)
 
@@ -54,7 +54,7 @@ def main(csv_file, put, runs, cut_off, step, out_file, message):
   mean_df = pd.DataFrame(mean_list, columns = ['subject', 'fuzzer', 'cov_type', 'time', 'cov'])
 
   fig, axes = plt.subplots(2, 2, figsize = (20, 10))
-  fig.suptitle("Code coverage analysis: {}\n{}".format(subject, message))
+  fig.suptitle("Code coverage analysis: {}\n{}\n".format(subject, message, legion_version))
 
 
   for key, grp in mean_df.groupby(['fuzzer', 'cov_type']):
@@ -98,5 +98,6 @@ if __name__ == '__main__':
     parser.add_argument('-s','--step',type=int,required=True,help="Time step in minutes")
     parser.add_argument('-o','--out_file',type=str,required=True,help="Output file")
     parser.add_argument('-m','--message',type=str,required=True,help="the hyper-parameter setting")
+    parser.add_argument('-v','--legion_version',type=str,required=True,help="the version of legion")
     args = parser.parse_args()
-    main(args.csv_file, args.put, args.runs, args.cut_off, args.step, args.out_file, args.message)
+    main(args.csv_file, args.put, args.runs, args.cut_off, args.step, args.out_file, args.message, args.legion_version)

@@ -55,7 +55,7 @@ fi
 
 # ========== Step 3: Run Fuzzing ========== #
 ## Confirm the experiment duration
-echo "Fuzzing time: ${TIME_SECONDS} seconds"
+echo "Fuzzing time     : ${TIME_SECONDS} seconds"
 if [ "${ONLY_LEGION}" -eq "0" ]; then
   profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet out-"${SUBJECT}"-aflnet \
     "${AFLNET_OPTIONS}" "${TIME_SECONDS}" 5 &
@@ -106,10 +106,9 @@ fi
     MESSAGE="${MESSAGE}  Legion Only: False;"
   fi
 
-  AFLNet_Legion_VERSION=$(run --cpus=1 -d -it donggeliu/"${SUBJECT}" /bin/bash \
-    -c "cd aflnet_legion; git --no-pager log -1 --format='%ad'")
-  MESSAGE="${MESSAGE}\nAFLNet_Legion Version: ${AFLNet_Legion_VERSION}"
+  AFLNet_Legion_VERSION="AFLNet_Legion Version: $(run --cpus=1 -it donggeliu/"${SUBJECT}" \
+    /bin/bash -c 'cd aflnet_legion; git --no-pager log -1 --format=%ad')"
 
   profuzzbench_plot.py -i results.csv -p "${SUBJECT}" -r 4 -c "${TIME_MINUTE}" -s 1 -o "${SUBJECT}_${TIME_STAMP}.png" \
-    -m "${MESSAGE}"
+    -m "${MESSAGE}" -v "${AFLNet_Legion_VERSION}"
 )
