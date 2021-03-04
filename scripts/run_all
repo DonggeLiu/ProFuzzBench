@@ -1,15 +1,28 @@
 #!/usr/bin/env sh
 
+# ========== Step 1: Command Line Parameters ========== #
 ONLY_LEGION=$1  # 0: Both AFLNet and AFLNet_Legion; 1: Just AFLNet_Legion
 PRE_RESULTS=$2  # Previous csv results (e.g. AFLNet) to reuse
 TIME_MINUTE=$3  # Experiment time in minutes
-#-l 0 -p 5 -a -z -r 1.414
 LOG_LVL=$4      # Log level
 IGN_AST=$5      # Ignore assertions
 FUZZ_M3=$6      # Fuzz M3
 RHO=$7          # Rho
 SUBJECT=$8      # Experiment target
 TREE_DP=5       # Log tree depth
+
+TIME_STAMP=$(date +"%Y-%m-%d-%H:%M:%S")  # Experiment starting time
+if [ "${ONLY_LEGION}" = "1" ]; then
+  RESULT_DIR="${SUBJECT}_${TIME_MINUTE}MIN_ONLY_AT${TIME_STAMP}"
+else
+  RESULT_DIR="${SUBJECT}_${TIME_MINUTE}MIN_BOTH_AT${TIME_STAMP}"
+fi
+mkdir -p "${RESULT_DIR}" # Where to save experiment results
+echo "Results directory: ${RESULT_DIR}" # Confirm the directory to save results
+
+
+# ========== Step 2: Prepare Fuzzing Parameters ========== #
+TIME_SECONDS=$((TIME_MINUTE * 60))
 
 LEGION_PARAMS="-l ${LOG_LVL} -p ${TREE_DP} -r ${RHO}"
 if [ "${IGN_AST}" = "1" ]; then
@@ -18,16 +31,6 @@ fi
 if [ "${FUZZ_M3}" = "1" ]; then
   LEGION_PARAMS="${LEGION_PARAMS} -z"
 fi
-
-TIME_STAMP=$(date +"%Y-%m-%d_%H%M%S")  # Experiment starting time
-RESULT_DIR="${SUBJECT}_${TIME_MINUTE}_${ONLY_LEGION}_${TIME_STAMP}"  # Where to save experiment results
-
-# TODO: define the params here, make them cmd line params
-# Convert the minute to seconds
-TIME_SECONDS=$((TIME_MINUTE * 60))
-
-# Confirm the directory to save results
-echo "Results directory: ${RESULT_DIR}"
 
 # Fuzing options
 if [ "${SUBJECT}" = "lightftp" ]; then
@@ -47,64 +50,29 @@ else
   exit 1
 fi
 
-# Make sure the result folder exists
-mkdir -p "${RESULT_DIR}"
 
-# Run fuzzing
+# ========== Step 3: Run Fuzzing ========== #
 ## Confirm the experiment duration
 echo "Fuzzing time: ${TIME_SECONDS} seconds"
 echo "Legion options: ${LEGION_OPTIONS}"
 if [ "${ONLY_LEGION}" -eq "0" ]; then
-#  if [ "${SUBJECT}" = "lightftp" ]; then
-#    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet out-"${SUBJECT}"-aflnet "-P FTP -D 10000 -q 3 -s 3 -E -K -c ./ftpclean.sh" "${TIME_SECONDS}" 5 &
-#    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-l 0 -p 5 -a -z -r 1.414 -P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh" "${TIME_SECONDS}" 5 &
-#    wait
-#  elif [ "${SUBJECT}" = "proftpd" ]; then
-#    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet out-"${SUBJECT}"-aflnet "-t 1000+ -m none -P FTP -D 10000 -q 3 -s 3 -E -K -c clean" "${TIME_SECONDS}" 5 &
-#    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-l 0 -p 5 -a -z -r 1.414 -t 1000+ -m none -P FTP -D 10000 -q 4 -s 4 -E -K -c clean" "${TIME_SECONDS}" 5 &
-#    wait
-#  elif [ "${SUBJECT}" = "openssl" ]; then
-#    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet out-"${SUBJECT}"-aflnet "-P TLS -D 10000 -q 3 -s 3 -E -K -R -W 100" "${TIME_SECONDS}" 5 &
-#    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-l 0 -p 5 -a -z -r 1.414 -P TLS -D 10000 -q 4 -s 4 -E -K -R -W 100" "${TIME_SECONDS}" 5 &
-#    wait
-#  elif [ "${SUBJECT}" = "openssh" ]; then
-#    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet out-"${SUBJECT}"-aflnet "-P SSH -D 10000 -q 3 -s 3 -E -K -W 10" "${TIME_SECONDS}" 5 &
-#    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-l 0 -p 5 -a -z -r 1.414 -P SSH -D 10000 -q 4 -s 4 -E -K -W 10" "${TIME_SECONDS}" 5 &
-#    wait
-#  else
-#    echo "Invalid subject: ${SUBJECT}"
-#    exit 1
-#  fi
-  #TODO: Try some minimum examples
-#  echo "profuzzbench_exec_common.sh donggeliu/${SUBJECT} 4 ${RESULT_DIR} aflnet out-${SUBJECT}-aflnet ${AFLNET_OPTIONS} ${TIME_SECONDS} 5"
-  profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet out-"${SUBJECT}"-aflnet "${AFLNET_OPTIONS}" "${TIME_SECONDS}" 5 &
-  profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "${LEGION_OPTIONS}" "${TIME_SECONDS}" 5 &
+  profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet out-"${SUBJECT}"-aflnet \
+    "${AFLNET_OPTIONS}" "${TIME_SECONDS}" 5 &
+  profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion \
+    "${LEGION_OPTIONS}" "${TIME_SECONDS}" 5 &
   wait
 else
-   profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "${LEGION_OPTIONS}" "${TIME_SECONDS}" 5 &
+   profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion \
+    "${LEGION_OPTIONS}" "${TIME_SECONDS}" 5 &
    wait
-#  if [ "${SUBJECT}" = "lightftp" ]; then
-#    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-l 0 -p 5 -a -z -r 1.414 -P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh" "${TIME_SECONDS}" 5 &
-#    wait
-#  elif [ "${SUBJECT}" = "proftpd" ]; then
-#    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-l 0 -p 5 -a -z -r 1.414 -t 1000+ -m none -P FTP -D 10000 -q 4 -s 4 -E -K -c clean" "${TIME_SECONDS}" 5 &
-#    wait
-#  elif [ "${SUBJECT}" = "openssl" ]; then
-#    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-l 0 -p 5 -a -z -r 1.414 -P TLS -D 10000 -q 4 -s 4 -E -K -R -W 100" "${TIME_SECONDS}" 5 &
-#    wait
-#  elif [ "${SUBJECT}" = "openssh" ]; then
-#    profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion "-l 0 -p 5 -a -z -r 1.414 -P SSH -D 10000 -q 4 -s 4 -E -K -W 10" "${TIME_SECONDS}" 5 &
-#    wait
-#  else
-#    echo "Invalid subject: ${SUBJECT}"
-#    exit 1
-#  fi
 fi
 
-# Collect the results
+
+# ========== Step 4: Collect the results ========== #
 (
   cd "${RESULT_DIR}" || exit
   if [ "${ONLY_LEGION}" -eq "1" ]; then
+    echo "Reuse previous results at ../${PRE_RESULTS}/results.csv"
     cp "../${PRE_RESULTS}/results.csv" .
   else
     profuzzbench_generate_csv.sh "${SUBJECT}" 4 aflnet results.csv 0
