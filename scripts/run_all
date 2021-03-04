@@ -13,7 +13,7 @@ TREE_DP=5       # Log tree depth
 
 date # Log the starting time
 
-TIME_STAMP=$(date +"%Y-%m-%d-%H:%M:%S")  # Experiment starting time
+TIME_STAMP=$(date +"%Y-%m-%d-%H=%M=%S")  # Experiment starting time
 if [ "${ONLY_LEGION}" = "1" ]; then
   RESULT_DIR="${SUBJECT}_${TIME_MINUTE}MIN_ONLY_AT${TIME_STAMP}"
 else
