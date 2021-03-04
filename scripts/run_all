@@ -101,9 +101,9 @@ fi
   fi
 
   if [ "${ONLY_LEGION}" = "1" ]; then
-    MESSAGE="${ONLY_LEGION}  Legion Only: True;"
+    MESSAGE="${MESSAGE}  Legion Only: True;"
   else
-    MESSAGE="${ONLY_LEGION}  Legion Only: False;"
+    MESSAGE="${MESSAGE}  Legion Only: False;"
   fi
 
   profuzzbench_plot.py -i results.csv -p "${SUBJECT}" -r 4 -c "${TIME_MINUTE}" -s 1 -o "${SUBJECT}_${TIME_STAMP}.png" \
