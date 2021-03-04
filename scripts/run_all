@@ -31,17 +31,17 @@ echo "Results directory: ${RESULT_DIR}"
 
 # Fuzing options
 if [ "${SUBJECT}" = "lightftp" ]; then
-  AFLNET_OPTIONS=\""-P FTP -D 10000 -q 3 -s 3 -E -K -c ./ftpclean.sh"\"
-  LEGION_OPTIONS=\""${LEGION_PARAMS} -P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh"\"
+  AFLNET_OPTIONS="\"-P FTP -D 10000 -q 3 -s 3 -E -K -c ./ftpclean.sh\""
+  LEGION_OPTIONS="\"${LEGION_PARAMS} -P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh\""
 elif  [ "${SUBJECT}" = "proftpd" ]; then
-  AFLNET_OPTIONS=\""-t 1000+ -m none -P FTP -D 10000 -q 3 -s 3 -E -K -c clean"\"
-  LEGION_OPTIONS=\""${LEGION_PARAMS} -t 1000+ -m none -P FTP -D 10000 -q 4 -s 4 -E -K -c clean"\"
+  AFLNET_OPTIONS="\"-t 1000+ -m none -P FTP -D 10000 -q 3 -s 3 -E -K -c clean\""
+  LEGION_OPTIONS="\"${LEGION_PARAMS} -t 1000+ -m none -P FTP -D 10000 -q 4 -s 4 -E -K -c clean\""
 elif  [ "${SUBJECT}" = "openssl" ]; then
-  AFLNET_OPTIONS=\""-P TLS -D 10000 -q 3 -s 3 -E -K -R -W 100"\"
-  LEGION_OPTIONS=\""${LEGION_PARAMS} -P TLS -D 10000 -q 4 -s 4 -E -K -R -W 100"\"
+  AFLNET_OPTIONS="\"-P TLS -D 10000 -q 3 -s 3 -E -K -R -W 100\""
+  LEGION_OPTIONS="\"${LEGION_PARAMS} -P TLS -D 10000 -q 4 -s 4 -E -K -R -W 100\""
 elif  [ "${SUBJECT}" = "openssh" ]; then
-  AFLNET_OPTIONS=\""-P SSH -D 10000 -q 3 -s 3 -E -K -W 10"\"
-  LEGION_OPTIONS=\""${LEGION_PARAMS} -P SSH -D 10000 -q 4 -s 4 -E -K -W 10"\"
+  AFLNET_OPTIONS="\"-P SSH -D 10000 -q 3 -s 3 -E -K -W 10\""
+  LEGION_OPTIONS="\"${LEGION_PARAMS} -P SSH -D 10000 -q 4 -s 4 -E -K -W 10\""
 else
   echo "Invalid subject: ${SUBJECT}"
   exit 1
@@ -107,7 +107,7 @@ fi
   if [ "${ONLY_LEGION}" -eq "1" ]; then
     cp "../${PRE_RESULTS}/results.csv" .
   else
-    profuzzbench_generate_csv.sh "${SUBJECT}" 4 aflnet results.csv 0 
+    profuzzbench_generate_csv.sh "${SUBJECT}" 4 aflnet results.csv 0
   fi
   profuzzbench_generate_csv.sh "${SUBJECT}" 4 aflnet_legion results.csv 1 
 )

@@ -17,13 +17,13 @@ date
 mkdir -p "${SAVETO}"
 
 echo "${FUZZER} will run for ${TIMEOUT} seconds with ${OPTIONS}"
-
+echo "cd ${WORKDIR} && run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}"
 #keep all container ids
 cids=()
 
 #create one container for each run
 for i in $(seq 1 $RUNS); do
-  id=$(docker run --cpus=1 -d -it $DOCIMAGE /bin/bash -c "cd ${WORKDIR} && run ${FUZZER} ${OUTDIR} '${OPTIONS}' ${TIMEOUT} ${SKIPCOUNT}")
+  id=$(docker run --cpus=1 -d -it $DOCIMAGE /bin/bash -c "cd ${WORKDIR} && run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}")
   if [ "${FUZZER}" == "aflnet_legion" ]; then
     LOG_PATH=$(docker exec "${id}" bash -c 'echo "$AFLNET_LEGION_LOG"')
     #echo "${id}:${LOG_PATH}"
