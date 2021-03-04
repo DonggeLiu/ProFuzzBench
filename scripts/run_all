@@ -11,6 +11,8 @@ RHO=$7          # Rho
 SUBJECT=$8      # Experiment target
 TREE_DP=5       # Log tree depth
 
+date # Log the starting time
+
 TIME_STAMP=$(date +"%Y-%m-%d-%H:%M:%S")  # Experiment starting time
 if [ "${ONLY_LEGION}" = "1" ]; then
   RESULT_DIR="${SUBJECT}_${TIME_MINUTE}MIN_ONLY_AT${TIME_STAMP}"
@@ -54,7 +56,6 @@ fi
 # ========== Step 3: Run Fuzzing ========== #
 ## Confirm the experiment duration
 echo "Fuzzing time: ${TIME_SECONDS} seconds"
-echo "Legion options: ${LEGION_OPTIONS}"
 if [ "${ONLY_LEGION}" -eq "0" ]; then
   profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet out-"${SUBJECT}"-aflnet \
     "${AFLNET_OPTIONS}" "${TIME_SECONDS}" 5 &
