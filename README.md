@@ -37,28 +37,64 @@ protocol-fuzzing-benchmark
 └── README.md
 ```
 
+# Tutorial - Fuzzing LightFTP server with [AFLNet](https://github.com/aflnet/aflnet) and [AFLNet_Legion](https://github.com/Alan32Liu/AFLNet_Legion), a network-enabled version of AFL
 
-# Tutorial - Fuzzing LightFTP server with [AFLNet](https://github.com/aflnet/aflnet) and [AFLnwe](https://github.com/aflnet/aflnwe), a network-enabled version of AFL
 Follow the steps below to run and collect experimental results for LightFTP, which is a lightweight File Transfer Protocol (FTP) server. The similar steps should be followed to run experiments on other subjects. Each subject program comes with a README.md file showing subject-specific commands to run experiments.
 
 ## Step-0. Set up environmental variables
+
 ```
 git clone https://github.com/profuzzbench/profuzzbench.git
 cd profuzzbench
 export PFBENCH=$(pwd)
-export PATH=$PATH:$PFBENCH/scripts/execution:$PFBENCH/scripts/analysis
+export PATH=$PATH:$PFBENCH/scripts:$PFBENCH/scripts/execution:$PFBENCH/scripts/analysis
 ```
 
 ## Step-1. Build a docker image
 The following commands create a docker image tagged lightftp. The image should have everything available for fuzzing and code coverage collection.
 
+ This fork of ProFuzzBench requires access to [AFLNet_Legion](https://github.com/Alan32Liu/AFLNet_Legion), which needs the following `<github.{username, password}>` to pull from that GitRepo.
+
 ```bash
 cd $PFBENCH
 cd subjects/FTP/LightFTP
-docker build . -t lightftp
+docker build --no-cache --rm --build-arg USR=<github.username> --build-arg PSW=<github.password> -t donggeliu/lightftp .
 ```
 
-## Step-2. Run fuzzing
+## Step-2. Run all
+
+Run `run_all` to run fuzzing, collect the results, and plot the results. The script takes 8 arguments as listed below.
+
+1. `ONLY_LEGION`: Wether to run:
+   * Both AFLNet and AFLNet_Legion (value `0`), or 
+   * Only run AFLNet_Legion (value `1`) and reuse the `result.csv` of AFLNet from the directory specified in the second parameter.
+2. `PRE_RESULTS`: The directory that stores the `result.csv` of `AFLNet`. If the first parameter is `0`, then this does not matter.
+3. `TIME_MINUTE`: Experiment duration in minutes.
+4. `LOG_LVL`: Verbosity of `AFLNet_Legion` logging. Level 0-5 correspond to `"TRACE"`, `"DEBUG"`, `"INFO"`, `"WARN”`, `"ERROR"`, `"FATAL”`. Logs will be stored as `log_aflnet_legion_*.ansi`.
+5. `IGN_AST`: Ignore assertion failures (value `1`) or exit with error when assertion fails (value `0`).
+6. `FUZZ_M3`: Fuzz `M3` (value `1`) or not (value `0`).
+7. `RHO`: The value of the exploration coefficient in MCTS.
+8. `SUBJECT`: The benchmarking subject.
+
+For example, the following command runs **both** `AFLNet` and `AFLNet_Legon` for **10** minutes, keeps **all** logs, **ignores** assertion failures, does **not** fuzz `M3`, and uses `1.414` as the exploration coefficient in `AFLNet_Legion`.
+
+```bash
+run_all 0 x 10 0 1 0 1.414 lightftp
+```
+
+The script will create a directory named `<SUBJECT>_<TIME_MINUTE>MIN_<ONLY,BOTH>_AT<TIME_STAMP>`, in which:
+
+*  <`SUBJECT>` is the benchmarking subject;
+* `<TIME_MINUTE>` is the experiment duration;
+*  `<ONLY,BOTH>` will be `ONLY` in `AFLNet_Legion` only mode, and vice versa;
+*  `<TIME_STAMP>` will be the time when the script is run.
+
+
+
+Or, run the commands one by one:
+
+### Step-2.1. Run fuzzing
+
 Run [profuzzbench_exec_common.sh script](scripts/execution/profuzzbench_exec_common.sh) to start an experiment. The script takes 8 arguments as listed below.
 
 - ***1st argument (DOCIMAGE)*** : name of the docker image
@@ -93,7 +129,8 @@ AFLNET: Collecting results from container 5c54104ddb86
 AFLNET: I am done!
 ```
 
-## Step-3. Collect the results
+### Step-2.2. Collect the results
+
 All results (in tar files) should be stored in the folder created in Step-2 (results-lightftp). Specifically, these tar files are the compressed version of output folders produced by all fuzzing instances. If the fuzzer is afl based (e.g., AFLNet, AFLnwe) each folder should contain sub-folders like crashes, hangs, queue and so on. Use [profuzzbench_generate_csv.sh script](scripts/analysis/profuzzbench_generate_csv.sh) to collect results in terms of code coverage over time. The script takes 5 arguments as listed below.
 
 - ***1st argument (PROG)***   : name of the subject program (e.g., lightftp)
@@ -123,7 +160,8 @@ time,subject,fuzzer,run,cov_type,cov
 1600905795,lightftp,aflnwe,1,l_abs,292
 ```
 
-## Step-4. Analyze the results
+### Step-2.3. Analyze the results
+
 The results collected in step 3 (i.e., results.csv) can be used for plotting. For instance, we provide [a sample Python script](scripts/analysis/profuzzbench_plot.py) to plot code coverage over time. Use the following command to plot the results and save it to a file.
 
 ```
