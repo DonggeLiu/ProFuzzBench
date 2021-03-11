@@ -106,9 +106,9 @@ fi
     MESSAGE="${MESSAGE}  Legion Only: False;"
   fi
 
-  AFLNet_Legion_VERSION="AFLNet_Legion Version: $(run --cpus=1 -it donggeliu/"${SUBJECT}" \
+  AFLNet_Legion_VERSION="AFLNet_Legion Version: $(docker run --cpus=1 -it donggeliu/"${SUBJECT}" \
     /bin/bash -c 'cd aflnet_legion; git --no-pager log -1 --format=%ad')"
-
+  echo "${AFLNet_Legion_VERSION}"
   profuzzbench_plot.py -i results.csv -p "${SUBJECT}" -r 4 -c "${TIME_MINUTE}" -s 1 -o "${SUBJECT}_${TIME_STAMP}.png" \
     -m "${MESSAGE}" -v "${AFLNet_Legion_VERSION}"
 )
