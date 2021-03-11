@@ -54,7 +54,8 @@ def main(csv_file, put, runs, cut_off, step, out_file, message, legion_version):
   mean_df = pd.DataFrame(mean_list, columns = ['subject', 'fuzzer', 'cov_type', 'time', 'cov'])
 
   fig, axes = plt.subplots(2, 2, figsize = (20, 10))
-  fig.suptitle("Code coverage analysis: {}\n{}\n".format(subject, message, legion_version))
+  title="Code coverage analysis: {}\n{}\n{}".format(subject, message, legion_version[:-1])
+  fig.suptitle(title)
 
 
   for key, grp in mean_df.groupby(['fuzzer', 'cov_type']):
