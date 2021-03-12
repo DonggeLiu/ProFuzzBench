@@ -23,6 +23,32 @@ mkdir -p "${RESULT_DIR}" # Where to save experiment results
 echo "Results directory: ${RESULT_DIR}" # Confirm the directory to save results
 
 
+MESSAGE="Duration: ${TIME_MINUTE}min; Log level:${LOG_LVL}; RHO: ${RHO}"
+
+if [ "${IGN_AST}" = "1" ]; then
+  MESSAGE="${MESSAGE}  Ignore assertions: True;"
+else
+  MESSAGE="${MESSAGE}  Ignore assertions: False;"
+fi
+
+if [ "${FUZZ_M3}" = "1" ]; then
+  MESSAGE="${MESSAGE}  Fuzz M3: True;"
+else
+  MESSAGE="${MESSAGE}  Fuzz M3: False;"
+fi
+
+if [ "${ONLY_LEGION}" = "1" ]; then
+  MESSAGE="${MESSAGE}  Legion Only: True;"
+else
+  MESSAGE="${MESSAGE}  Legion Only: False;"
+fi
+echo "${MESSAGE}"
+
+AFLNet_Legion_VERSION="AFLNet_Legion Version: $(docker run --cpus=1 -it donggeliu/"${SUBJECT}" \
+  /bin/bash -c 'cd aflnet_legion; git --no-pager log -1 --format=%ad')"
+echo "${AFLNet_Legion_VERSION}"
+
+
 # ========== Step 2: Prepare Fuzzing Parameters ========== #
 TIME_SECONDS=$((TIME_MINUTE * 60))
 
@@ -86,29 +112,7 @@ fi
 (
   cd "${RESULT_DIR}" || exit
   echo "Plotting time: ${TIME_MINUTE} minutes"
-  MESSAGE="Duration: ${TIME_MINUTE}min; Log level:${LOG_LVL}; RHO: ${RHO}"
 
-  if [ "${IGN_AST}" = "1" ]; then
-    MESSAGE="${MESSAGE}  Ignore assertions: True;"
-  else
-    MESSAGE="${MESSAGE}  Ignore assertions: False;"
-  fi
-
-  if [ "${FUZZ_M3}" = "1" ]; then
-    MESSAGE="${MESSAGE}  Fuzz M3: True;"
-  else
-    MESSAGE="${MESSAGE}  Fuzz M3: False;"
-  fi
-
-  if [ "${ONLY_LEGION}" = "1" ]; then
-    MESSAGE="${MESSAGE}  Legion Only: True;"
-  else
-    MESSAGE="${MESSAGE}  Legion Only: False;"
-  fi
-
-  AFLNet_Legion_VERSION="AFLNet_Legion Version: $(docker run --cpus=1 -it donggeliu/"${SUBJECT}" \
-    /bin/bash -c 'cd aflnet_legion; git --no-pager log -1 --format=%ad')"
-  echo "${AFLNet_Legion_VERSION}"
   profuzzbench_plot.py -i results.csv -p "${SUBJECT}" -r 4 -c "${TIME_MINUTE}" -s 1 -o "${SUBJECT}_${TIME_STAMP}.png" \
     -m "${MESSAGE}" -v "${AFLNet_Legion_VERSION}"
 )
