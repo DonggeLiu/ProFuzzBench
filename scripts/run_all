@@ -116,3 +116,6 @@ fi
   profuzzbench_plot.py -i results.csv -p "${SUBJECT}" -r 4 -c "${TIME_MINUTE}" -s 1 -o "${SUBJECT}_${TIME_STAMP}.png" \
     -m "${MESSAGE}" -v "${AFLNet_Legion_VERSION}"
 )
+
+# ========== Step 6: Save the stats ========== #
+cp stats "${RESULT_DIR}"
