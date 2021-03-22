@@ -23,9 +23,9 @@ for i in $(seq 1 $RUNS); do
   id=$(docker run --cpus=1 -d -it $DOCIMAGE /bin/bash -c "cd ${WORKDIR} && run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}")
   if [ "${FUZZER}" == "aflnet_legion" ]; then
     LOG_PATH=$(docker exec "${id}" bash -c 'echo "$AFLNET_LEGION_LOG"')
-    WORKDIR=$(docker exec "${id}" bash -c 'echo "$WORKDIR"')
     #echo "${id}:${LOG_PATH}"
   fi
+  WORKDIR=$(docker exec "${id}" bash -c 'echo "$WORKDIR"')
   cids+=(${id::12}) #store only the first 12 characters of a container ID
 done
 
