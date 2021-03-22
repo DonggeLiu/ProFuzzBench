@@ -23,6 +23,7 @@ for i in $(seq 1 $RUNS); do
   id=$(docker run --cpus=1 -d -it $DOCIMAGE /bin/bash -c "cd ${WORKDIR} && run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}")
   if [ "${FUZZER}" == "aflnet_legion" ]; then
     LOG_PATH=$(docker exec "${id}" bash -c 'echo "$AFLNET_LEGION_LOG"')
+    WORKDIR=$(docker exec "${id}" bash -c 'echo "$WORKDIR"')
     #echo "${id}:${LOG_PATH}"
   fi
   cids+=(${id::12}) #store only the first 12 characters of a container ID
@@ -48,6 +49,8 @@ for id in ${cids[@]}; do
   if [ "${FUZZER}" == "aflnet_legion" ]; then
     docker cp "${id}:${LOG_PATH}" "${SAVETO}/log_${FUZZER}_${index}.ansi" > /dev/null
   fi
+  mkdir -p "${SAVETO}/gcovr_reports"
+  docker cp "${id}:${WORKDIR}/gcovr_report-${FUZZER}.txt" "${SAVETO}/gcovr_reports/gcovr_report-${FUZZER}_${index}.txt" > /dev/null
   index=$((index+1))
 done
 
