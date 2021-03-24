@@ -41,4 +41,12 @@ if $(strstr $FUZZER "afl"); then
   #Tar all results to a file
   cd ${WORKDIR}/proftpd
   tar -zcvf ${WORKDIR}/${OUTDIR}.tar.gz ${OUTDIR}
+
+  cd "${WORKDIR}/proftpd-gcov/Source/Release" || exit
+  TIME_NOW=$(date +"%Y-%m-%d-%H=%M=%S")
+  mkdir "${TIME_NOW}"
+  python gcovr-new.py -b -c -r .. > "${TIME_NOW}/gcovr_report-${FUZZER}.txt"
+  cp "${TIME_NOW}/gcovr_report-${FUZZER}.txt" "${WORKDIR}"
+  # Rrun process_gcovr_reports.py outside the container
+
 fi
