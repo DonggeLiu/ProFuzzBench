@@ -122,5 +122,3 @@ RUN cd ${WORKDIR}/LightFTP-gcov/Source/Release && \
 RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/diff-gcov.git && \
     cp "/home/ubuntu/diff-gcov/gcovr-new.py" "${WORKDIR}/LightFTP-gcov/Source/Release/" && \
     cp "/home/ubuntu/diff-gcov/process_gcovr_reports.py" "${WORKDIR}/LightFTP-gcov/Source/Release/"
-
-
