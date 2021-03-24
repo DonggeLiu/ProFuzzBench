@@ -100,7 +100,7 @@ RUN cd ${WORKDIR} && \
 
 # Set up ProFTPD for coverage analysis
 RUN cd ${WORKDIR} && \
-    git clone https://github.com/proftpd/proftpd.git proftpd-gcov && \
+    git clone https://github.com/proftpd/proftpd.git c-gcov && \
     cd proftpd-gcov && \
     git checkout 4017eff8 && \
     CFLAGS="-fprofile-arcs -ftest-coverage" CPPFLAGS="-fprofile-arcs -ftest-coverage" CXXFLAGS="-fprofile-arcs -ftest-coverage" LDFLAGS="-fprofile-arcs -ftest-coverage" ./configure --enable-devel=nodaemon:nofork && \
@@ -114,5 +114,5 @@ RUN pip install gcovr
 
 # Download the scripts to process results
 RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/diff-gcov.git && \
-    cp "/home/ubuntu/diff-gcov/gcovr-new.py" "${WORKDIR}/LightFTP-gcov/Source/Release/" && \
-    cp "/home/ubuntu/diff-gcov/process_gcovr_reports.py" "${WORKDIR}/LightFTP-gcov/Source/Release/"
+    cp "/home/ubuntu/diff-gcov/gcovr-new.py" "${WORKDIR}/proftpd-gcov/Source/Release/" && \
+    cp "/home/ubuntu/diff-gcov/process_gcovr_reports.py" "${WORKDIR}/proftpd-gcov/Source/Release/"
