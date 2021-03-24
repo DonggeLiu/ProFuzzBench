@@ -42,7 +42,7 @@ if $(strstr $FUZZER "afl"); then
   cd ${WORKDIR}/proftpd
   tar -zcvf ${WORKDIR}/${OUTDIR}.tar.gz ${OUTDIR}
 
-  cd "${WORKDIR}/proftpd-gcov/Source/Release" || exit
+  cd "${WORKDIR}/proftpd-gcov/" || exit
   TIME_NOW=$(date +"%Y-%m-%d-%H=%M=%S")
   mkdir "${TIME_NOW}"
   python gcovr-new.py -b -c -r .. > "${TIME_NOW}/gcovr_report-${FUZZER}.txt"
