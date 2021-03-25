@@ -104,3 +104,8 @@ RUN cd ${WORKDIR} && \
     git checkout 0437435a && \
     CFLAGS="-fprofile-arcs -ftest-coverage" LDFLAGS="-fprofile-arcs -ftest-coverage" ./config no-shared && \
     CFLAGS="-fprofile-arcs -ftest-coverage" LDFLAGS="-fprofile-arcs -ftest-coverage" make
+
+# Download the scripts to process results
+RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/diff-gcov.git && \
+    cp "/home/ubuntu/diff-gcov/gcovr-new.py" "${WORKDIR}/openssl-gcov/" && \
+    cp "/home/ubuntu/diff-gcov/process_gcovr_reports.py" "${WORKDIR}/openssl-gcov/"
