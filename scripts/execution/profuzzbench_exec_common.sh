@@ -21,10 +21,11 @@ cids=()
 #create one container for each run
 for i in $(seq 1 $RUNS); do
   id=$(docker run --cpus=1 -d -it $DOCIMAGE /bin/bash -c "cd ${WORKDIR} && run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}")
-  if [ "${FUZZER}" == "aflnet_legion" ]; then
-    LOG_PATH=$(docker exec "${id}" bash -c 'echo "$AFLNET_LEGION_LOG"')
-    #echo "${id}:${LOG_PATH}"
-  fi
+  LOG_PATH=$(docker exec "${id}" bash -c 'echo "$AFLNET_LEGION_LOG"')
+#  if [ "${FUZZER}" == "aflnet_legion" ]; then
+#    LOG_PATH=$(docker exec "${id}" bash -c 'echo "$AFLNET_LEGION_LOG"')
+#    #echo "${id}:${LOG_PATH}"
+#  fi
   WORKDIR=$(docker exec "${id}" bash -c 'echo "$WORKDIR"')
   cids+=(${id::12}) #store only the first 12 characters of a container ID
 done
@@ -46,9 +47,10 @@ index=1
 for id in ${cids[@]}; do
   printf "\n${FUZZER^^}: Collecting results from container ${id}"
   docker cp ${id}:/home/ubuntu/experiments/${OUTDIR}.tar.gz ${SAVETO}/${OUTDIR}_${index}.tar.gz > /dev/null
-  if [ "${FUZZER}" == "aflnet_legion" ]; then
-    docker cp "${id}:${LOG_PATH}" "${SAVETO}/log_${FUZZER}_${index}.ansi" > /dev/null
-  fi
+  docker cp "${id}:${LOG_PATH}" "${SAVETO}/log_${FUZZER}_${index}.ansi" > /dev/null
+#  if [ "${FUZZER}" == "aflnet_legion" ]; then
+#    docker cp "${id}:${LOG_PATH}" "${SAVETO}/log_${FUZZER}_${index}.ansi" > /dev/null
+#  fi
   mkdir -p "${SAVETO}/gcovr_reports"
   docker cp "${id}:${WORKDIR}/gcovr_report-${FUZZER}.txt" "${SAVETO}/gcovr_reports/gcovr_report-${FUZZER}_${index}.txt" > /dev/null
   index=$((index+1))
