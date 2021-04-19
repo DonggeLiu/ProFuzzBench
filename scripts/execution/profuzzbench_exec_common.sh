@@ -20,7 +20,10 @@ cids=()
 
 #create one container for each run
 for i in $(seq 1 $RUNS); do
-  id=$(docker run --cpus=1 -d -it --security-opt seccomp=unconfined  -v=/data/donggeliu/AFLNetMCTS/ProFuzzBench/temp/${FUZZER}/i/:${OUTDIR} $DOCIMAGE /bin/bash -c "cd ${WORKDIR} && run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}")
+  echo "/data/donggeliu/AFLNetMCTS/ProFuzzBench/temp/${FUZZER}/i/"
+  echo "${OUTDIR}"
+  echo "run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}"
+  id=$(docker run --cpus=1 -d -it --user "root:root" -v=/data/donggeliu/AFLNetMCTS/ProFuzzBench/temp/${FUZZER}/i/:/home/ubuntu/experiments/LightFTP/Source/Release/${OUTDIR} $DOCIMAGE /bin/bash -c "run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}")
   LOG_PATH=$(docker exec "${id}" bash -c 'echo "$AFLNET_LEGION_LOG"')
 #  if [ "${FUZZER}" == "aflnet_legion" ]; then
 #    LOG_PATH=$(docker exec "${id}" bash -c 'echo "$AFLNET_LEGION_LOG"')
