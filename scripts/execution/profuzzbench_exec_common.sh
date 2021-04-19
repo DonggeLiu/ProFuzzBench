@@ -59,6 +59,9 @@ for id in ${cids[@]}; do
   index=$((index+1))
 done
 
+# So that we can delete those files later
+(cd "${OUTDIR}"; chmod -R 777 ./*;)
+
 printf "\n${FUZZER^^}: I am done!"
 
 date
