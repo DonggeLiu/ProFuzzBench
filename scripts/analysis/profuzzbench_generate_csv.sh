@@ -48,11 +48,9 @@ convert() {
 #extract tar files & process the data
 for fuzzer in $fuzzers; do 
   for i in $(seq 1 $runs); do 
-    printf "\nProcessing out-${prog}-${fuzzer}-${i} ..."
+    printf "\nProcessing out-${prog}-${fuzzer}-${i} ...\n"
     rm -rf out-${prog}-${fuzzer}-${i}
-    tar -zxvf out-${prog}-${fuzzer}_${i}.tar.gz > /dev/null 2>&1
-    mv out-${prog}-${fuzzer} out-${prog}-${fuzzer}-${i}
     #combine all csv files
-    convert $fuzzer $prog $i out-${prog}-${fuzzer}-${i}/cov_over_time.csv $covfile
+    convert $fuzzer $prog $i ${fuzzer}-${i}/cov_over_time.csv $covfile
   done 
 done

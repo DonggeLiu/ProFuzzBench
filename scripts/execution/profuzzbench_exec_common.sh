@@ -20,19 +20,17 @@ cids=()
 
 #create one container for each run
 for i in $(seq 1 $RUNS); do
-  mkdir -p "/data/donggeliu/AFLNetMCTS/ProFuzzBench/temp/${FUZZER}/${i}"
-  echo "/data/donggeliu/AFLNetMCTS/ProFuzzBench/temp/${FUZZER}/${i}/"
+  mkdir -p "${SAVETO}/${FUZZER}-${i}/"
+  echo "${SAVETO}/${FUZZER}-${i}/"
   echo "${OUTDIR}"
   echo "run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}"
-  id=$(docker run --cpus=1 -d -it --user "root:root" -v=/data/donggeliu/AFLNetMCTS/ProFuzzBench/temp/${FUZZER}/${i}/:/home/ubuntu/experiments/LightFTP/Source/Release/${OUTDIR} $DOCIMAGE /bin/bash -c "run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}")
+  id=$(docker run --cpus=1 -d -it -v="${SAVETO}/${FUZZER}-${i}/":"/home/ubuntu/experiments/LightFTP/Source/Release/${OUTDIR}" $DOCIMAGE /bin/bash -c "run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}")
   LOG_PATH=$(docker exec "${id}" bash -c 'echo "$AFLNET_LEGION_LOG"')
 #  if [ "${FUZZER}" == "aflnet_legion" ]; then
 #    LOG_PATH=$(docker exec "${id}" bash -c 'echo "$AFLNET_LEGION_LOG"')
 #    #echo "${id}:${LOG_PATH}"
 #  fi
   WORKDIR=$(docker exec "${id}" bash -c 'echo "$WORKDIR"')
-  # So that we can delete those files later
-  docker exec --user "root:root" "${id}" bash -c '(cd "/home/ubuntu/experiments/LightFTP/Source/Release/${OUTDIR}"; chmod -R 777 ./*;)'
   cids+=(${id::12}) #store only the first 12 characters of a container ID
 done
 
@@ -52,13 +50,10 @@ printf "\n${FUZZER^^}: Collecting results and save them to ${SAVETO}"
 index=1
 for id in ${cids[@]}; do
   printf "\n${FUZZER^^}: Collecting results from container ${id}"
-  docker cp ${id}:/home/ubuntu/experiments/${OUTDIR}.tar.gz ${SAVETO}/${OUTDIR}_${index}.tar.gz > /dev/null
-  docker cp "${id}:${LOG_PATH}" "${SAVETO}/log_${FUZZER}_${index}.ansi" > /dev/null
-#  if [ "${FUZZER}" == "aflnet_legion" ]; then
-#    docker cp "${id}:${LOG_PATH}" "${SAVETO}/log_${FUZZER}_${index}.ansi" > /dev/null
-#  fi
-  mkdir -p "${SAVETO}/gcovr_reports"
-  docker cp "${id}:${WORKDIR}/gcovr_report-${FUZZER}.txt" "${SAVETO}/gcovr_reports/gcovr_report-${FUZZER}_${index}.txt" > /dev/null
+#  docker cp ${id}:/home/ubuntu/experiments/${OUTDIR}.tar.gz ${SAVETO}/${OUTDIR}_${index}.tar.gz > /dev/null
+  docker cp "${id}:${LOG_PATH}" "${SAVETO}/${FUZZER}-${i}/log_${FUZZER}_${index}.ansi" > /dev/null
+  mkdir -p "${SAVETO}/${FUZZER}-${i}/gcovr_reports"
+  docker cp "${id}:${WORKDIR}/gcovr_report-${FUZZER}.txt" "${SAVETO}/${FUZZER}-${i}/gcovr_reports/gcovr_report-${FUZZER}_${index}.txt" > /dev/null
   index=$((index+1))
 done
 

@@ -19,6 +19,7 @@ if [ "${ONLY_LEGION}" = "1" ]; then
 else
   RESULT_DIR="${SUBJECT}_${TIME_MINUTE}MIN_BOTH_AT${TIME_STAMP}"
 fi
+RESULT_DIR="${PWD}/${RESULT_DIR}"
 mkdir -p "${RESULT_DIR}" # Where to save experiment results
 echo "Results directory: ${RESULT_DIR}" # Confirm the directory to save results
 
@@ -119,3 +120,4 @@ fi
 
 # ========== Step 6: Save the stats ========== #
 cp stats "${RESULT_DIR}"
+cp error "${RESULT_DIR}"
