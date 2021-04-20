@@ -5,9 +5,9 @@ ARG PSW
 ARG UID
 ARG GID
 
-RUN echo "Github User    : $USR"
-    && echo "Github Password: $PSW"
-    && echo "Host User ID : $UID"
+RUN echo "Github User    : $USR" \
+    && echo "Github Password: $PSW" \
+    && echo "Host User ID : $UID" \
     && echo "Host Group ID: $GID"
 
 
