@@ -5,7 +5,10 @@ ARG PSW
 ARG UID
 ARG GID
 
-RUN echo $USR && echo $PSW
+RUN echo "Github User    : $USR"
+    && echo "Github Password: $PSW"
+    && echo "Host User ID : $UID"
+    && echo "Host Group ID: $GID"
 
 
 # Install common dependencies
