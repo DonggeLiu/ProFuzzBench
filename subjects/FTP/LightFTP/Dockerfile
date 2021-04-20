@@ -2,6 +2,8 @@ FROM ubuntu:16.04
 
 ARG USR
 ARG PSW
+ARG UID
+ARG GID
 
 RUN echo $USR && echo $PSW
 
@@ -39,7 +41,7 @@ ENV TZ=Australia/Melbourne
 
 # Add a new user ubuntu, pass: ubuntu
 RUN groupadd ubuntu && \
-    useradd -rm -d /home/ubuntu -s /bin/bash -g ubuntu -G sudo -u 1000 ubuntu -p "$(openssl passwd -1 ubuntu)"
+    useradd -rm -d /home/ubuntu -s /bin/bash -G sudo -u $UID -g $GID ubuntu -p "$(openssl passwd -1 ubuntu)"
 
 # Use ubuntu as default username
 USER ubuntu
