@@ -9,7 +9,7 @@ OUTDIR=$5     #name of the output folder created inside the docker container
 OPTIONS=$6    #all configured options for fuzzing
 TIMEOUT=$7    #time for fuzzing
 SKIPCOUNT=$8  #used for calculating coverage over time. e.g., SKIPCOUNT=5 means we run gcovr after every 5 test cases
-
+OUTDIR_PARENT=$9
 
 # Make sure the result folder exists
 mkdir -p "${SAVETO}"
@@ -24,7 +24,7 @@ for i in $(seq 1 $RUNS); do
   echo "${SAVETO}/${FUZZER}-${i}/"
   echo "${OUTDIR}"
   echo "run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}"
-  id=$(docker run --cpus=1 -d -it -v="${SAVETO}/${FUZZER}-${i}/":"/home/ubuntu/experiments/LightFTP/Source/Release/${OUTDIR}" $DOCIMAGE /bin/bash -c "run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}")
+  id=$(docker run --cpus=1 -d -it -v="${SAVETO}/${FUZZER}-${i}/":"${OUTDIR_PARENT}/${OUTDIR}" $DOCIMAGE /bin/bash -c "run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}")
   LOG_PATH=$(docker exec "${id}" bash -c 'echo "$AFLNET_LEGION_LOG"')
 #  if [ "${FUZZER}" == "aflnet_legion" ]; then
 #    LOG_PATH=$(docker exec "${id}" bash -c 'echo "$AFLNET_LEGION_LOG"')
