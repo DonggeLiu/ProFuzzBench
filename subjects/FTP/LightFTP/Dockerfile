@@ -43,7 +43,7 @@ RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime
 ENV TZ=Australia/Melbourne
 
 # Add a new user ubuntu, pass: ubuntu
-RUN groupadd ubuntu && \
+RUN groupadd -g $GID ubuntu && \
     useradd -rm -d /home/ubuntu -s /bin/bash -G sudo -u $UID -g $GID ubuntu -p "$(openssl passwd -1 ubuntu)"
 
 # Use ubuntu as default username
