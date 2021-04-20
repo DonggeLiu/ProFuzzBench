@@ -20,16 +20,19 @@ cids=()
 
 #create one container for each run
 for i in $(seq 1 $RUNS); do
-  echo "/data/donggeliu/AFLNetMCTS/ProFuzzBench/temp/${FUZZER}/i/"
+  mkdir -p "/data/donggeliu/AFLNetMCTS/ProFuzzBench/temp/${FUZZER}/${i}"
+  echo "/data/donggeliu/AFLNetMCTS/ProFuzzBench/temp/${FUZZER}/${i}/"
   echo "${OUTDIR}"
   echo "run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}"
-  id=$(docker run --cpus=1 -d -it --user "root:root" -v=/data/donggeliu/AFLNetMCTS/ProFuzzBench/temp/${FUZZER}/i/:/home/ubuntu/experiments/LightFTP/Source/Release/${OUTDIR} $DOCIMAGE /bin/bash -c "run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}")
+  id=$(docker run --cpus=1 -d -it --user "root:root" -v=/data/donggeliu/AFLNetMCTS/ProFuzzBench/temp/${FUZZER}/${i}/:/home/ubuntu/experiments/LightFTP/Source/Release/${OUTDIR} $DOCIMAGE /bin/bash -c "run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}")
   LOG_PATH=$(docker exec "${id}" bash -c 'echo "$AFLNET_LEGION_LOG"')
 #  if [ "${FUZZER}" == "aflnet_legion" ]; then
 #    LOG_PATH=$(docker exec "${id}" bash -c 'echo "$AFLNET_LEGION_LOG"')
 #    #echo "${id}:${LOG_PATH}"
 #  fi
   WORKDIR=$(docker exec "${id}" bash -c 'echo "$WORKDIR"')
+  # So that we can delete those files later
+  docker exec --user "root:root" "${id}" bash -c '(cd "/home/ubuntu/experiments/LightFTP/Source/Release/${OUTDIR}"; chmod -R 777 ./*;)'
   cids+=(${id::12}) #store only the first 12 characters of a container ID
 done
 
@@ -59,8 +62,6 @@ for id in ${cids[@]}; do
   index=$((index+1))
 done
 
-# So that we can delete those files later
-(cd "${OUTDIR}"; chmod -R 777 ./*;)
 
 printf "\n${FUZZER^^}: I am done!"
 
