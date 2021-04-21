@@ -27,6 +27,7 @@ for i in $(seq 1 $RUNS); do
   id=$(docker run --cpus=1 -d -it -v="${SAVETO}/${FUZZER}-${i}/":"${OUTDIR_PARENT}/${OUTDIR}" $DOCIMAGE /bin/bash -c "run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}")
   LOG_PATH=$(docker exec "${id}" bash -c 'echo "$AFLNET_LEGION_LOG"')
   WORKDIR=$(docker exec "${id}" bash -c 'echo "$WORKDIR"')
+  docker exec --user "root:root" "${id}" bash -c '(cd "${OUTDIR_PARENT}/${OUTDIR}"; chmod -R 777 ./*;)'
   cids+=(${id::12}) #store only the first 12 characters of a container ID
 done
 
