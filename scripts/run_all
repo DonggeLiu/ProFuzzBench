@@ -73,6 +73,7 @@ elif  [ "${SUBJECT}" = "proftpd" ]; then
 elif  [ "${SUBJECT}" = "openssl" ]; then
   AFLNET_OPTIONS="\"-P TLS -D 10000 -q 3 -s 3 -E -K -R -W 100\""
   LEGION_OPTIONS="\"${LEGION_PARAMS} -P TLS -D 10000 -q 4 -s 4 -E -K -R -W 100\""
+  OUTDIR_PARENT="/home/ubuntu/experiments/openssl"
 elif  [ "${SUBJECT}" = "openssh" ]; then
   AFLNET_OPTIONS="\"-P SSH -D 10000 -q 3 -s 3 -E -K -W 10\""
   LEGION_OPTIONS="\"${LEGION_PARAMS} -P SSH -D 10000 -q 4 -s 4 -E -K -W 10\""
