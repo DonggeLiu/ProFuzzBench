@@ -49,14 +49,14 @@ for id in ${cids[@]}; do
   printf "\n${FUZZER^^}: Collecting results from container ${id}"
 #  docker cp ${id}:/home/ubuntu/experiments/${OUTDIR}.tar.gz ${SAVETO}/${OUTDIR}_${index}.tar.gz > /dev/null
   echo "${id}:${LOG_PATH}"
-  echo "${SAVETO}/${FUZZER}-${i}/log_${FUZZER}_${index}.ansi"
+  echo "${SAVETO}/${FUZZER}-${index}/log_${FUZZER}_${index}.ansi"
   echo "${id}:${WORKDIR}/gcovr_report-${FUZZER}.txt"
-  echo "${SAVETO}/${FUZZER}-${i}/gcovr_reports"
-  echo "${SAVETO}/${FUZZER}-${i}/gcovr_reports/gcovr_report-${FUZZER}_${index}.txt"
+  echo "${SAVETO}/${FUZZER}-${index}/gcovr_reports"
+  echo "${SAVETO}/${FUZZER}-${index}/gcovr_reports/gcovr_report-${FUZZER}_${index}.txt"
 
-  docker cp "${id}:${LOG_PATH}" "${SAVETO}/${FUZZER}-${i}/log_${FUZZER}_${index}.ansi" > /dev/null
-  mkdir -p "${SAVETO}/${FUZZER}-${i}/gcovr_reports"
-  docker cp "${id}:${WORKDIR}/gcovr_report-${FUZZER}.txt" "${SAVETO}/${FUZZER}-${i}/gcovr_reports/gcovr_report-${FUZZER}_${index}.txt" > /dev/null
+  docker cp "${id}:${LOG_PATH}" "${SAVETO}/${FUZZER}-${index}/log_${FUZZER}_${index}.ansi" > /dev/null
+  mkdir -p "${SAVETO}/${FUZZER}-${index}/gcovr_reports"
+  docker cp "${id}:${WORKDIR}/gcovr_report-${FUZZER}.txt" "${SAVETO}/${FUZZER}-${index}/gcovr_reports/gcovr_report-${FUZZER}_${index}.txt" > /dev/null
   index=$((index+1))
 done
 
