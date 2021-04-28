@@ -10,6 +10,7 @@ FUZZ_M3=$6      # Fuzz M3
 RHO=$7          # Rho
 SUBJECT=$8      # Experiment target
 TREE_DP=5       # Log tree depth
+PROFUZZBENCH=$(git rev-parse --show-toplevel)
 
 date # Log the starting time
 
@@ -19,7 +20,7 @@ if [ "${ONLY_LEGION}" = "1" ]; then
 else
   RESULT_DIR="${SUBJECT}_${TIME_MINUTE}MIN_BOTH_AT${TIME_STAMP}"
 fi
-RESULT_DIR="${PWD}/${RESULT_DIR}"
+RESULT_DIR="${PROFUZZBENCH}/Records/${RESULT_DIR}"
 mkdir -p "${RESULT_DIR}" # Where to save experiment results
 echo "Results directory: ${RESULT_DIR}" # Confirm the directory to save results
 
