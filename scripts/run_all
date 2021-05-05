@@ -81,7 +81,7 @@ elif  [ "${SUBJECT}" = "openssh" ]; then
   OUTDIR_PARENT="/home/ubuntu/experiments/openssh"
 elif  [ "${SUBJECT}" = "smtp" ]; then
   AFLNET_OPTIONS="\"-P SMTP -D 10000 -q 3 -s 3 -E -K -W 100\""
-  LEGION_OPTIONS="\"${LEGION_PARAMS} -P SMTP -D 10000 -q 3 -s 3 -E -K -W 100\""
+  LEGION_OPTIONS="\"${LEGION_PARAMS} -P SMTP -D 10000 -q 4 -s 4 -E -K -W 100\""
   OUTDIR_PARENT="/home/ubuntu/experiments/exim"
 else
   echo "Invalid subject: ${SUBJECT}"
