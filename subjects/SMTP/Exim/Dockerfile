@@ -112,5 +112,6 @@ RUN cd /usr/exim && \
 
 # Download the scripts to process results
 RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/diff-gcov.git && \
-    cp "/home/ubuntu/diff-gcov/gcovr-new.py" "${WORKDIR}" && \
-    cp "/home/ubuntu/diff-gcov/process_gcovr_reports.py" "${WORKDIR}"
+    mkdir -p "${WORKDIR}/exim-gcov" && \
+    cp "/home/ubuntu/diff-gcov/gcovr-new.py" "${WORKDIR}/exim-gcov" && \
+    cp "/home/ubuntu/diff-gcov/process_gcovr_reports.py" "${WORKDIR}/exim-gcov"
