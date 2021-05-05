@@ -111,7 +111,7 @@ RUN cd /usr/exim && \
     chmod 1777 /var/mail
 
 # Download the scripts to process results
-RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/diff-gcov.git && \
-    mkdir -p "${WORKDIR}/exim-gcov" && \
-    cp "/home/ubuntu/diff-gcov/gcovr-new.py" "${WORKDIR}/exim-gcov" && \
-    cp "/home/ubuntu/diff-gcov/process_gcovr_reports.py" "${WORKDIR}/exim-gcov"
+RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/diff-gcov.git
+#    mkdir -p "${WORKDIR}/exim-gcov" && \
+#    cp "/home/ubuntu/diff-gcov/gcovr-new.py" "${WORKDIR}/exim-gcov" && \
+#    cp "/home/ubuntu/diff-gcov/process_gcovr_reports.py" "${WORKDIR}/exim-gcov"

@@ -44,9 +44,11 @@ if $(strstr $FUZZER "afl"); then
   cd ${WORKDIR}/exim
   tar -zcvf ${WORKDIR}/${OUTDIR}.tar.gz ${OUTDIR}
 
-  cd "${WORKDIR}/LightFTP-gcov/Source/Release" || exit
+  cd "${WORKDIR}/exim-gcov" || exit
   TIME_NOW=$(date +"%Y-%m-%d-%H=%M=%S")
   mkdir "${TIME_NOW}"
+  cp "/home/ubuntu/diff-gcov/gcovr-new.py" "${WORKDIR}/exim-gcov"
+  cp "/home/ubuntu/diff-gcov/process_gcovr_reports.py" "${WORKDIR}/exim-gcov"
   python gcovr-new.py -b -c -r .. > "${TIME_NOW}/gcovr_report-${FUZZER}.txt"
   cp "${TIME_NOW}/gcovr_report-${FUZZER}.txt" "${WORKDIR}"
   # Rrun process_gcovr_reports.py outside the container
