@@ -131,6 +131,6 @@ fi
     -m "${MESSAGE}" -v "${AFLNet_Legion_VERSION}"
 )
 
-# ========== Step 6: Save the stats ========== #
-cp stats "${RESULT_DIR}"
-cp error "${RESULT_DIR}"
+# ========== Step 6: Save the stats and errors ========== #
++cp "stats_${TIME_STAMP}" "${RESULT_DIR}"
++cp "error_${TIME_STAMP}" "${RESULT_DIR}"
