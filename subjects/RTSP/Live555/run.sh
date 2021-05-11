@@ -19,6 +19,7 @@ if $(strstr $FUZZER "afl"); then
   timeout -k 0 $TIMEOUT /home/ubuntu/${FUZZER}/afl-fuzz -d -i ${WORKDIR}/in-rtsp -x ${WORKDIR}/rtsp.dict -o $OUTDIR -N tcp://127.0.0.1/8554 $OPTIONS ./testOnDemandRTSPServer 8554
   wait 
 
+  cp "${AFLNET_LEGION_LOG}" "${WORKDIR}/live555/testProgs/${OUTDIR}/"
   #Step-2. Collect code coverage over time
   #Move to gcov folder
   cd $WORKDIR/live555-cov/testProgs
