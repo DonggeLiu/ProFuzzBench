@@ -16,8 +16,10 @@ if $(strstr $FUZZER "afl"); then
   #Step-1. Do Fuzzing
   #Move to fuzzing folder
   cd $WORKDIR/live555/testProgs
-  timeout -k 0 $TIMEOUT /home/ubuntu/${FUZZER}/afl-fuzz -d -i ${WORKDIR}/in-rtsp -x ${WORKDIR}/rtsp.dict -o $OUTDIR -N tcp://127.0.0.1/8554 $OPTIONS ./testOnDemandRTSPServer 8554
-  wait 
+  timeout -k 0 $TIMEOUT /home/ubuntu/${FUZZER}/afl-fuzz -d -i ${WORKDIR}/in-rtsp -x \
+  ${WORKDIR}/rtsp.dict -o $OUTDIR -N tcp://127.0.0.1/8554 $OPTIONS ./testOnDemandRTSPServer 8554 \
+  2>~/fuzzing_error
+  wait
 
   #Step-2. Collect code coverage over time
   #Move to gcov folder
@@ -47,5 +49,16 @@ if $(strstr $FUZZER "afl"); then
   #Step-3. Save the result to the ${WORKDIR} folder
   #Tar all results to a file
   cd ${WORKDIR}/live555/testProgs
+  cp ~/fuzzing_error ${WORKDIR}/live555/testProgs/${OUTDIR}/
   tar -zcvf ${WORKDIR}/${OUTDIR}.tar.gz ${OUTDIR}
+
+  cd "${WORKDIR}/live555-cov" || exit
+  TIME_NOW=$(date +"%Y-%m-%d-%H=%M=%S")
+  mkdir "${TIME_NOW}"
+  cp "/home/ubuntu/diff-gcov/gcovr-new.py" "${WORKDIR}/live555-cov"
+  cp "/home/ubuntu/diff-gcov/process_gcovr_reports.py" "${WORKDIR}/live555-cov"
+  python gcovr-new.py -b -c -r .. > "${TIME_NOW}/gcovr_report-${FUZZER}.txt"
+  cp "${TIME_NOW}/gcovr_report-${FUZZER}.txt" "${WORKDIR}"
+  # Rrun process_gcovr_reports.py outside the container
+
 fi
