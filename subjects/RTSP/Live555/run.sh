@@ -21,6 +21,7 @@ if $(strstr $FUZZER "afl"); then
   2>~/fuzzing_error
   wait
 
+  cp "${AFLNET_LEGION_LOG}" "${WORKDIR}/live555/testProgs/${OUTDIR}/"
   #Step-2. Collect code coverage over time
   #Move to gcov folder
   cd $WORKDIR/live555-cov/testProgs

@@ -19,6 +19,7 @@ if $(strstr $FUZZER "afl"); then
   timeout -k 0 $TIMEOUT /home/ubuntu/${FUZZER}/afl-fuzz -d -i ${WORKDIR}/in-ssh -x ${WORKDIR}/ssh.dict -o $OUTDIR -N tcp://127.0.0.1/22 $OPTIONS ./sshd -d -e -p 22 -r -f sshd_config 2>error_container
   wait 
 
+  cp "${AFLNET_LEGION_LOG}" "${WORKDIR}/openssh/${OUTDIR}/"
   #Step-2. Collect code coverage over time
   #Move to gcov folder
   cd $WORKDIR/openssh-gcov

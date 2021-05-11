@@ -20,6 +20,7 @@ if $(strstr $FUZZER "afl"); then
   #Wait for the fuzzing process
   wait 
 
+  cp "${AFLNET_LEGION_LOG}" "${WORKDIR}/proftpd/${OUTDIR}/"
   #Step-2. Collect code coverage over time
   #Move to gcov folder
   cd $WORKDIR/proftpd-gcov
