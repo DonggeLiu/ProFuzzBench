@@ -16,10 +16,11 @@ if $(strstr $FUZZER "afl"); then
   #Step-1. Do Fuzzing
   #Move to fuzzing folder
   cd $WORKDIR/proftpd
-  timeout -k 0 $TIMEOUT /home/ubuntu/${FUZZER}/afl-fuzz -d -i ${WORKDIR}/in-ftp -o $OUTDIR -x ${WORKDIR}/ftp.dict -N tcp://127.0.0.1/21 $OPTIONS proftpd -n -c ${WORKDIR}/basic.conf -X
+  timeout -k 0 $TIMEOUT /home/ubuntu/${FUZZER}/afl-fuzz -d -i ${WORKDIR}/in-ftp -o $OUTDIR -x ${WORKDIR}/ftp.dict -N tcp://127.0.0.1/21 $OPTIONS proftpd -n -c ${WORKDIR}/basic.conf -X 2>/home/ubuntu/fuzzing_error
   #Wait for the fuzzing process
   wait 
 
+  cp /home/ubuntu/fuzzing_error "${WORKDIR}/proftpd/${OUTDIR}/"
   cp "${AFLNET_LEGION_LOG}" "${WORKDIR}/proftpd/${OUTDIR}/"
   #Step-2. Collect code coverage over time
   #Move to gcov folder

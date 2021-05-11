@@ -16,9 +16,10 @@ if $(strstr $FUZZER "afl"); then
   #Step-1. Do Fuzzing
   #Move to fuzzing folder
   cd $WORKDIR/exim
-  timeout -k 0 $TIMEOUT /home/ubuntu/${FUZZER}/afl-fuzz -d -i ${WORKDIR}/in-smtp -x ${WORKDIR}/smtp.dict -o $OUTDIR -N tcp://127.0.0.1/25 $OPTIONS exim -bd -oX 25
+  timeout -k 0 $TIMEOUT /home/ubuntu/${FUZZER}/afl-fuzz -d -i ${WORKDIR}/in-smtp -x ${WORKDIR}/smtp.dict -o $OUTDIR -N tcp://127.0.0.1/25 $OPTIONS exim -bd -oX 25 2>/home/ubuntu/fuzzing_error
   wait
 
+  cp /home/ubuntu/fuzzing_error "${WORKDIR}/exim/${OUTDIR}"
   cp "${AFLNET_LEGION_LOG}" "${WORKDIR}/exim/${OUTDIR}"
   #Step-2. Compile Exim for code coverage analysis
   $WORKDIR/compile_exim_gcov.sh
