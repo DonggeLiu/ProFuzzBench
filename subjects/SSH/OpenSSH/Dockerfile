@@ -2,8 +2,13 @@ FROM ubuntu:16.04
 
 ARG USR
 ARG PSW
+ARG UID
+ARG GID
 
-RUN echo $USR && echo $PSW
+RUN echo "Github User    : $USR" \
+    && echo "Github Password: $PSW" \
+    && echo "Host User ID : $UID" \
+    && echo "Host Group ID: $GID"
 
 
 # Install common dependencies
@@ -40,8 +45,8 @@ RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime
 ENV TZ=Australia/Melbourne
 
 # Add a new user ubuntu, pass: ubuntu
-RUN groupadd ubuntu && \
-    useradd -rm -d /home/ubuntu -s /bin/bash -g ubuntu -G sudo -u 1000 ubuntu -p "$(openssl passwd -1 ubuntu)"
+RUN groupadd -g $GID ubuntu && \
+    useradd -rm -d /home/ubuntu -s /bin/bash -G sudo -u $UID -g $GID ubuntu -p "$(openssl passwd -1 ubuntu)"
 
 WORKDIR /home/ubuntu
 
@@ -49,7 +54,7 @@ WORKDIR /home/ubuntu
 ENV LLVM_CONFIG="llvm-config-3.8"
 
 # Set up fuzzers
-RUN git clone https://github.com/profuzzbench/aflnet.git && \
+RUN git clone https://github.com/Alan32Liu/aflnet.git && \
     cd aflnet && \
     make clean all && \
     cd llvm_mode && make
@@ -122,3 +127,5 @@ RUN cd ${WORKDIR} && \
 RUN cd ${WORKDIR}/openssh && \
     ./sshd -d -e -p 22 -r -f sshd_config > /dev/null 2>&1 & sleep 5; sshpass -p "ubuntu" ssh -oStrictHostKeyChecking=no ubuntu@127.0.0.1 -p 22
     
+# Download the scripts to process results
+RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/diff-gcov.git

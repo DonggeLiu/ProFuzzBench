@@ -42,4 +42,14 @@ if $(strstr $FUZZER "afl"); then
   #Tar all results to a file
   cd ${WORKDIR}/openssh
   tar -zcvf ${WORKDIR}/${OUTDIR}.tar.gz ${OUTDIR}
+
+  cd "${WORKDIR}/openssh-gcov/" || exit
+  TIME_NOW=$(date +"%Y-%m-%d-%H=%M=%S")
+  mkdir "${TIME_NOW}"
+  cp "/home/ubuntu/diff-gcov/gcovr-new.py" "${WORKDIR}/openssh-gcov"
+  cp "/home/ubuntu/diff-gcov/process_gcovr_reports.py" "${WORKDIR}/openssh-gcov"
+  python gcovr-new.py -b -c -r .. > "${TIME_NOW}/gcovr_report-${FUZZER}.txt"
+  cp "${TIME_NOW}/gcovr_report-${FUZZER}.txt" "${WORKDIR}"
+  # Rrun process_gcovr_reports.py outside the container
+
 fi
