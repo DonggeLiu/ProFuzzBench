@@ -24,7 +24,7 @@ for i in $(seq 1 $RUNS); do
   echo "${SAVETO}/${FUZZER}-${i}/"
   echo "${OUTDIR_PARENT}/${OUTDIR}"
   echo "run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}"
-  id=$(docker run --cpus=1 -d --name "${FUZZER/aflnet_legion/legion}_$((TIMEOUT / 60))MIN_${i}" -it -v="${SAVETO}/${FUZZER}-${i}/":"${OUTDIR_PARENT}/${OUTDIR}" $DOCIMAGE /bin/bash -c "run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}")
+  id=$(docker run --cpus=1 -d --name "${FUZZER/aflnet_legion/legion}_$((TIMEOUT / 60))MIN_${i}_${DOCIMAGE/donggeliu\/}" -it -v="${SAVETO}/${FUZZER}-${i}/":"${OUTDIR_PARENT}/${OUTDIR}" $DOCIMAGE /bin/bash -c "run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}")
   LOG_PATH=$(docker exec "${id}" bash -c 'echo "$AFLNET_LEGION_LOG"')
   WORKDIR=$(docker exec "${id}" bash -c 'echo "$WORKDIR"')
   docker exec --user "root:root" -e OUTDIR_PARENT="${OUTDIR_PARENT}" -e OUTDIR="${OUTDIR}" "${id}" bash -c '(cd "${OUTDIR_PARENT}/${OUTDIR}"; chmod -R 777 ./*;)'
