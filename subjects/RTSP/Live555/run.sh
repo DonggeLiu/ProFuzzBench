@@ -48,8 +48,8 @@ if $(strstr $FUZZER "afl"); then
 
   #Step-3. Save the result to the ${WORKDIR} folder
   #Tar all results to a file
-  cd ${WORKDIR}/live555/testProgs
-  tar -zcvf ${WORKDIR}/${OUTDIR}.tar.gz ${OUTDIR}
+#  cd ${WORKDIR}/live555/testProgs
+#  tar -zcvf ${WORKDIR}/${OUTDIR}.tar.gz ${OUTDIR}
 
   cd "${WORKDIR}/live555-cov" || exit
   TIME_NOW=$(date +"%Y-%m-%d-%H=%M=%S")

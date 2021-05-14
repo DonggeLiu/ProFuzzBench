@@ -41,8 +41,8 @@ if $(strstr $FUZZER "afl"); then
 
   #Step-3. Save the result to the ${WORKDIR} folder
   #Tar all results to a file
-  cd ${WORKDIR}/proftpd
-  tar -zcvf ${WORKDIR}/${OUTDIR}.tar.gz ${OUTDIR}
+#  cd ${WORKDIR}/proftpd
+#  tar -zcvf ${WORKDIR}/${OUTDIR}.tar.gz ${OUTDIR}
 
   cd "${WORKDIR}/proftpd-gcov/" || exit
   TIME_NOW=$(date +"%Y-%m-%d-%H=%M=%S")

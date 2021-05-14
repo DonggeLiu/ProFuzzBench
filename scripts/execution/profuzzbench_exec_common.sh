@@ -50,7 +50,6 @@ printf "\n${FUZZER^^}: Collecting results and save them to ${SAVETO}"
 index=1
 for id in ${cids[@]}; do
   printf "\n${FUZZER^^}: Collecting results from container ${id}"
-#  docker cp ${id}:/home/ubuntu/experiments/${OUTDIR}.tar.gz ${SAVETO}/${OUTDIR}_${index}.tar.gz > /dev/null
   echo "${id}:${WORKDIR}/gcovr_report-${FUZZER}.txt"
   echo "${SAVETO}/${FUZZER}-${index}/gcovr_reports"
   echo "${SAVETO}/${FUZZER}-${index}/gcovr_reports/gcovr_report-${FUZZER}_${index}.txt"
