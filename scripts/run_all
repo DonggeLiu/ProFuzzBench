@@ -9,7 +9,7 @@ IGN_AST=$5      # Ignore assertions
 FUZZ_M3=$6      # Fuzz M3
 RHO=$7          # Rho
 SUBJECT=$8      # Experiment target
-TREE_DP=5       # Log tree depth
+TREE_DP=105       # Log tree depth
 PROFUZZBENCH=$(git rev-parse --show-toplevel)
 
 date # Log the starting time
