@@ -132,6 +132,6 @@ fi
 )
 
 # ========== Step 6: Save the stats and errors ========== #
-cp "stats_${TIME_STAMP}" "${RESULT_DIR}"
-cp "error_${TIME_STAMP}" "${RESULT_DIR}"
+cp "status/stats_${TIME_STAMP}" "${RESULT_DIR}"
+cp "status/error_${TIME_STAMP}" "${RESULT_DIR}"
 
