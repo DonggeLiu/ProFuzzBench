@@ -140,6 +140,7 @@ fi
     -m "$MESSAGE" -lv "$AFLNet_Legion_VERSION" -pv "$ProFuzzBench_VERSION" -pc "$ProFuzzBench_CLEAN"
 )
 
-# ========== Step 6: Save the stats ========== #
-cp stats "${RESULT_DIR}"
-cp error "${RESULT_DIR}"
+# ========== Step 6: Save the stats and errors ========== #
+cp "status/stats_${TIME_STAMP}" "${RESULT_DIR}"
+cp "status/error_${TIME_STAMP}" "${RESULT_DIR}"
+
