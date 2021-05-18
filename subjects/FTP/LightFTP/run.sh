@@ -21,7 +21,6 @@ if $(strstr $FUZZER "afl"); then
   wait
 
   cp /home/ubuntu/fuzzing_error "${WORKDIR}/LightFTP/Source/Release/${OUTDIR}"
-  cp "${AFLNET_LEGION_LOG}" "${WORKDIR}/LightFTP/Source/Release/${OUTDIR}/"
   #Step-2. Collect code coverage over time
   #Move to gcov folder
   cd $WORKDIR/LightFTP-gcov/Source/Release

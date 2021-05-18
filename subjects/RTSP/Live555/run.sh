@@ -20,7 +20,6 @@ if $(strstr $FUZZER "afl"); then
   wait
 
   cp /home/ubuntu/fuzzing_error ${WORKDIR}/live555/testProgs/${OUTDIR}/
-  cp "${AFLNET_LEGION_LOG}" "${WORKDIR}/live555/testProgs/${OUTDIR}/"
   #Step-2. Collect code coverage over time
   #Move to gcov folder
   cd $WORKDIR/live555-cov/testProgs

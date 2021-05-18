@@ -26,7 +26,9 @@ for i in $(seq 1 $RUNS); do
   echo "run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}"
   id=$(docker run --cpus=1 -d \
   --name "${FUZZER/aflnet_legion/legion}_$((TIMEOUT / 60))MIN_${i}_${DOCIMAGE/donggeliu\/}" \
-  -it -v="${SAVETO}/${FUZZER}-${i}/":"${OUTDIR_PARENT}/${OUTDIR}" $DOCIMAGE /bin/bash \
+  -it -v="${SAVETO}/${FUZZER}-${i}/":"${OUTDIR_PARENT}/${OUTDIR}" \
+  -e FUZZER_LOG="${OUTDIR_PARENT}/${OUTDIR}/log.ansi" \
+  $DOCIMAGE /bin/bash \
   -c "run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}")
   LOG_PATH=$(docker exec "${id}" bash -c 'echo "$AFLNET_LEGION_LOG"')
   WORKDIR=$(docker exec "${id}" bash -c 'echo "$WORKDIR"')

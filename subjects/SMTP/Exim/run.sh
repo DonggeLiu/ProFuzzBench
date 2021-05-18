@@ -20,7 +20,6 @@ if $(strstr $FUZZER "afl"); then
   wait
 
   cp /home/ubuntu/fuzzing_error "${WORKDIR}/exim/${OUTDIR}"
-  cp "${AFLNET_LEGION_LOG}" "${WORKDIR}/exim/${OUTDIR}"
   #Step-2. Compile Exim for code coverage analysis
   $WORKDIR/compile_exim_gcov.sh
 

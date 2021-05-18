@@ -19,7 +19,6 @@ if $(strstr $FUZZER "afl"); then
   wait 
 
   cp /home/ubuntu/fuzzing_error "${WORKDIR}/openssl/${OUTDIR}/"
-  cp "${AFLNET_LEGION_LOG}" "${WORKDIR}/openssl/${OUTDIR}/"
   #Step-2. Collect code coverage over time
   #Move to gcov folder
   cd $WORKDIR/openssl-gcov

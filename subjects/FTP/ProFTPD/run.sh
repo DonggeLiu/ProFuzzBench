@@ -21,7 +21,6 @@ if $(strstr $FUZZER "afl"); then
   wait 
 
   cp /home/ubuntu/fuzzing_error "${WORKDIR}/proftpd/${OUTDIR}/"
-  cp "${AFLNET_LEGION_LOG}" "${WORKDIR}/proftpd/${OUTDIR}/"
   #Step-2. Collect code coverage over time
   #Move to gcov folder
   cd $WORKDIR/proftpd-gcov

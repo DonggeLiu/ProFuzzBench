@@ -77,7 +77,6 @@ ENV AFLNET="/home/ubuntu/aflnet"
 ENV PATH="${PATH}:${AFLNET}:/home/ubuntu/.local/bin:${WORKDIR}:${WORKDIR}/proftpd"
 ENV AFL_PATH="${AFLNET}"
 ENV AFL_NET="${AFLNET}"
-ENV AFLNET_LEGION_LOG='/home/ubuntu/aflnet_legion/log.ansi'
 
 ENV AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1 \
     AFL_SKIP_CPUFREQ=1 \
