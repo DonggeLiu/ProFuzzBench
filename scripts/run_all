@@ -62,7 +62,7 @@ if [ "${FUZZ_M3}" = "1" ]; then
   LEGION_PARAMS="${LEGION_PARAMS} -z"
 fi
 
-# Fuzing options
+# Fuzzing options
 if [ "${SUBJECT}" = "lightftp" ]; then
   AFLNET_OPTIONS="\"-P FTP -D 10000 -q 3 -s 3 -E -K -c ./ftpclean.sh\""
   LEGION_OPTIONS="\"${LEGION_PARAMS} -P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh\""
