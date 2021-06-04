@@ -63,6 +63,7 @@ RUN git clone https://github.com/profuzzbench/aflnwe.git && \
 # Set up AFLNet_Legion
 RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/AFLNet_Legion.git aflnet_legion && \
     cd aflnet_legion && \
+    git checkout 99c79578b86caabd2d0752f29dcbe3cef57e2c85 && \
     make clean all && \
     cd llvm_mode && make
 
