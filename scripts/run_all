@@ -11,6 +11,7 @@ RHO=$7          # Rho
 SUBJECT=$8      # Experiment target
 TREE_DP=5       # Log tree depth
 PROFUZZBENCH=$(git rev-parse --show-toplevel)
+RUNS=4
 
 date # Log the starting time
 
@@ -89,13 +90,13 @@ fi
 ## Confirm the experiment duration
 echo "Fuzzing time     : ${TIME_SECONDS} seconds"
 if [ "${ONLY_LEGION}" -eq "0" ]; then
-  profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet out-"${SUBJECT}"-aflnet \
+  profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" "$RUNS" "${RESULT_DIR}" aflnet out-"${SUBJECT}"-aflnet \
     "${AFLNET_OPTIONS}" "${TIME_SECONDS}" 5 "${OUTDIR_PARENT}" &
-  profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion \
+  profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" "$RUNS" "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion \
     "${LEGION_OPTIONS}" "${TIME_SECONDS}" 5 "${OUTDIR_PARENT}" &
   wait
 else
-   profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" 4 "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion \
+   profuzzbench_exec_common.sh donggeliu/"${SUBJECT}" "$RUNS" "${RESULT_DIR}" aflnet_legion out-"${SUBJECT}"-aflnet_legion \
     "${LEGION_OPTIONS}" "${TIME_SECONDS}" 5 "${OUTDIR_PARENT}" &
    wait
 fi
@@ -108,9 +109,9 @@ fi
     echo "Reuse previous results at ../${PRE_RESULTS}/results.csv"
     cp "../${PRE_RESULTS}/results.csv" .
   else
-    profuzzbench_generate_csv.sh "${SUBJECT}" 4 aflnet results.csv 0
+    profuzzbench_generate_csv.sh "${SUBJECT}" "$RUNS" aflnet results.csv 0
   fi
-  profuzzbench_generate_csv.sh "${SUBJECT}" 4 aflnet_legion results.csv 1 
+  profuzzbench_generate_csv.sh "${SUBJECT}" "$RUNS" aflnet_legion results.csv 1
 )
 
 
@@ -119,8 +120,8 @@ fi
   cd "${RESULT_DIR}" || exit
   echo "Plotting time: ${TIME_MINUTE} minutes"
 
-  profuzzbench_plot.py -i results.csv -p "${SUBJECT}" -r 4 -c "${TIME_MINUTE}" -s 1 -o "${SUBJECT}_${TIME_STAMP}.png" \
-    -m "${MESSAGE}" -v "${AFLNet_Legion_VERSION}"
+  profuzzbench_plot.py -i results.csv -p "${SUBJECT}" -r "$RUNS" -c "${TIME_MINUTE}" -s 1 \
+    -o "${SUBJECT}_${TIME_STAMP}.png" -m "${MESSAGE}" -v "${AFLNet_Legion_VERSION}"
 )
 
 # ========== Step 6: Save the stats ========== #
