@@ -24,7 +24,7 @@ for i in $(seq 1 $RUNS); do
   echo "${SAVETO}/${FUZZER}-${i}/"
   echo "${OUTDIR_PARENT}/${OUTDIR}"
   echo "run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}"
-  id=$(docker run --cpus=1 -d -it -v="${SAVETO}/${FUZZER}-${i}/":"${OUTDIR_PARENT}/${OUTDIR}" $DOCIMAGE /bin/bash -c "run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}")
+  id=$(docker run --cpus=1 -d -it $DOCIMAGE /bin/bash -c "run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}")
   LOG_PATH=$(docker exec "${id}" bash -c 'echo "$AFLNET_LEGION_LOG"')
   WORKDIR=$(docker exec "${id}" bash -c 'echo "$WORKDIR"')
   docker exec --user "root:root" -e OUTDIR_PARENT="${OUTDIR_PARENT}" -e OUTDIR="${OUTDIR}" "${id}" bash -c '(cd "${OUTDIR_PARENT}/${OUTDIR}"; chmod -R 777 ./*;)'
@@ -47,7 +47,7 @@ printf "\n${FUZZER^^}: Collecting results and save them to ${SAVETO}"
 index=1
 for id in ${cids[@]}; do
   printf "\n${FUZZER^^}: Collecting results from container ${id}"
-#  docker cp ${id}:/home/ubuntu/experiments/${OUTDIR}.tar.gz ${SAVETO}/${OUTDIR}_${index}.tar.gz > /dev/null
+  docker cp ${id}:/home/ubuntu/experiments/${OUTDIR}.tar.gz ${SAVETO}/${OUTDIR}_${index}.tar.gz > /dev/null
   echo "${id}:${LOG_PATH}"
   echo "${SAVETO}/${FUZZER}-${index}/log_${FUZZER}_${index}.ansi"
   echo "${id}:${WORKDIR}/gcovr_report-${FUZZER}.txt"
