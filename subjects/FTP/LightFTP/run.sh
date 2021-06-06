@@ -35,7 +35,7 @@ if strstr "$FUZZER" "afl"; then
   cd "$WORKDIR/LightFTP-gcov/Source/Release" || exit 1
 
   #The last argument passed to cov_script should be 0 if the fuzzer is afl/nwe and it should be 1 if the fuzzer is based on aflnet
-  #0: the test case is a concatenated message sequence -- there is no message boundary
+  #0: the test case is a concatenated message sequence -gcovr- there is no message boundary
   #1: the test case is a structured file keeping several request messages
   if [ "$FUZZER" = "aflnwe" ]; then
     cov_script "${WORKDIR}/LightFTP/Source/Release/${OUTDIR}/" 2200 "${SKIPCOUNT}" \
@@ -49,16 +49,15 @@ if strstr "$FUZZER" "afl"; then
   mkdir "${WORKDIR}/LightFTP/Source/Release/${OUTDIR}/cov_html/"
   cp ./*.html "${WORKDIR}/LightFTP/Source/Release/${OUTDIR}/cov_html/"
 
+  cd "${WORKDIR}/LightFTP-gcov/Source/Release" || exit 1
+  TIME_NOW=$(date +"%Y-%m-%d-%H=%M=%S")
+  mkdir "${TIME_NOW}"
+  python gcovr-new.py -b -c -r .. > "${TIME_NOW}/gcovr_report.txt"
+  mv "${TIME_NOW}/gcovr_report.txt" "${WORKDIR}/LightFTP/Source/Release/${OUTDIR}/"
+  # Run process_gcovr_reports.py outside the container
+
   #Step-3. Save the result to the ${WORKDIR} folder
   #Tar all results to a file
   cd "${WORKDIR}/LightFTP/Source/Release" || exit 1
   tar -zcvf "${WORKDIR}/${OUTDIR}.tar.gz" "${OUTDIR}"
-
-  cd "${WORKDIR}/LightFTP-gcov/Source/Release" || exit
-  TIME_NOW=$(date +"%Y-%m-%d-%H=%M=%S")
-  mkdir "${TIME_NOW}"
-  python gcovr-new.py -b -c -r .. > "${TIME_NOW}/gcovr_report-${FUZZER}.txt"
-  cp "${TIME_NOW}/gcovr_report-${FUZZER}.txt" "${WORKDIR}"
-  # Run process_gcovr_reports.py outside the container
-
 fi
