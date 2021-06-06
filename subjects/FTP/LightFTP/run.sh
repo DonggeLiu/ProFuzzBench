@@ -29,7 +29,7 @@ if strstr "$FUZZER" "afl"; then
 
   #Step-2. Collect code coverage over time
   #Move to gcov folder
-  cp /home/ubuntu/fuzzing_error "${WORKDIR}/LightFTP/Source/Release/${OUTDIR}/"
+  mv /home/ubuntu/fuzzing_error "${WORKDIR}/LightFTP/Source/Release/${OUTDIR}/"
   mv "$FUZZER_LOG" "${WORKDIR}/LightFTP/Source/Release/${OUTDIR}/"
   cd "$WORKDIR/LightFTP-gcov/Source/Release" || exit 1
 
