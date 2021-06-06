@@ -20,7 +20,14 @@ container_ids=()
 #create one container for each run
 for i in $(seq 1 "$RUNS"); do
   mkdir -p "${SAVETO}/${FUZZER}-${i}/"
-  id=$(docker run --cpus=1 -d -it "$DOCIMAGE" /bin/bash -c "run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}")
+  id=$(docker run \
+    --cpus=1 \
+    -d \
+    --name "${FUZZER/aflnet_legion/legion}_$((TIMEOUT / 60))MIN_${i}_${DOCIMAGE/donggeliu\/}" \
+    -it \
+    "$DOCIMAGE" \
+    /bin/bash \
+    -c "run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}")
   LOG_PATH=$(docker exec "${id}" bash -c 'echo "$AFLNET_LEGION_LOG"')
   WORKDIR=$(docker exec "${id}" bash -c 'echo "$WORKDIR"')
   container_ids+=("${id::12}") #store only the first 12 characters of a container ID
