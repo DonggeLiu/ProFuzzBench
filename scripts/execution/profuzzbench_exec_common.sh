@@ -9,6 +9,7 @@ OUTDIR=$5     #name of the output folder created inside the docker container
 OPTIONS=$6    #all configured options for fuzzing
 TIMEOUT=$7    #time for fuzzing
 SKIPCOUNT=$8  #used for calculating coverage over time. e.g., SKIPCOUNT=5 means we run gcovr after every 5 test cases
+OUTDIR_PARENT=$9
 
 # Make sure the result folder exists
 mkdir -p "${SAVETO}"
@@ -23,12 +24,12 @@ for i in $(seq 1 "$RUNS"); do
   id=$(docker run \
     --cpus=1 \
     -d \
+    -e FUZZER_LOG="$OUTDIR_PARENT/log.ansi" \
     --name "${FUZZER/aflnet_legion/legion}_$((TIMEOUT / 60))MIN_${i}_${DOCIMAGE/donggeliu\/}" \
     -it \
     "$DOCIMAGE" \
     /bin/bash \
     -c "run ${FUZZER} ${OUTDIR} ${OPTIONS} ${TIMEOUT} ${SKIPCOUNT}")
-  LOG_PATH=$(docker exec "${id}" bash -c 'echo "$AFLNET_LEGION_LOG"')
   WORKDIR=$(docker exec "${id}" bash -c 'echo "$WORKDIR"')
   container_ids+=("${id::12}") #store only the first 12 characters of a container ID
 done
@@ -46,7 +47,6 @@ for id in "${container_ids[@]}"; do
   echo "${FUZZER}: Collecting results from container ${id} to ${SAVETO}/${FUZZER}-${index}/"
   mkdir -p "${SAVETO}/${FUZZER}-${index}/gcovr_reports"
   docker cp "${id}:/home/ubuntu/experiments/${OUTDIR}.tar.gz" "${SAVETO}/${OUTDIR}_${index}.tar.gz"
-  docker cp "${id}:${LOG_PATH}" "${SAVETO}/${FUZZER}-${index}/log_${FUZZER}_${index}.ansi"
   docker cp "${id}:${WORKDIR}/gcovr_report-${FUZZER}.txt" \
     "${SAVETO}/${FUZZER}-${index}/gcovr_reports/gcovr_report-${FUZZER}_${index}.txt"
   index=$((index+1))

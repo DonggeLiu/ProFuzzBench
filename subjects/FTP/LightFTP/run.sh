@@ -30,6 +30,7 @@ if strstr "$FUZZER" "afl"; then
   #Step-2. Collect code coverage over time
   #Move to gcov folder
   cp /home/ubuntu/fuzzing_error "${WORKDIR}/LightFTP/Source/Release/${OUTDIR}/"
+  mv "$FUZZER_LOG" "${WORKDIR}/LightFTP/Source/Release/${OUTDIR}/"
   cd "$WORKDIR/LightFTP-gcov/Source/Release" || exit 1
 
   #The last argument passed to cov_script should be 0 if the fuzzer is afl/nwe and it should be 1 if the fuzzer is based on aflnet
