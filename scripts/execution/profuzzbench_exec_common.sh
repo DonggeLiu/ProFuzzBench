@@ -45,10 +45,7 @@ echo "${FUZZER}: Collecting results and save them to ${SAVETO}"
 index=1
 for id in "${container_ids[@]}"; do
   echo "${FUZZER}: Collecting results from container ${id} to ${SAVETO}/${FUZZER}-${index}/"
-  mkdir -p "${SAVETO}/${FUZZER}-${index}/gcovr_reports"
   docker cp "${id}:/home/ubuntu/experiments/${OUTDIR}.tar.gz" "${SAVETO}/${OUTDIR}_${index}.tar.gz"
-  docker cp "${id}:${WORKDIR}/gcovr_report-${FUZZER}.txt" \
-    "${SAVETO}/${FUZZER}-${index}/gcovr_reports/gcovr_report-${FUZZER}_${index}.txt"
   index=$((index+1))
 done
 
