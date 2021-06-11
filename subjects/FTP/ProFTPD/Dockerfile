@@ -40,6 +40,7 @@ RUN cp /etc/apt/sources.list /etc/apt/sources.list~ \
     && ln -s /opt/src/glibc-2.23 /build/glibc-e6zv40/
 
 # Set the timezone of docker for AFLNet_Legion loggings
+ENV TZ=Australia/Melbourne
 RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime
 ENV TZ=Australia/Melbourne
 
