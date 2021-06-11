@@ -42,7 +42,6 @@ RUN cp /etc/apt/sources.list /etc/apt/sources.list~ \
 # Set the timezone of docker for AFLNet_Legion loggings
 ENV TZ=Australia/Melbourne
 RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime
-ENV TZ=Australia/Melbourne
 
 # Add a new user ubuntu, pass: ubuntu
 RUN groupadd -o -g $GID ubuntu && \
