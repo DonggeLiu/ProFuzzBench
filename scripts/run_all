@@ -47,9 +47,16 @@ else
 fi
 echo "${MESSAGE}"
 
-AFLNet_Legion_VERSION="AFLNet_Legion Version: $(docker run --cpus=1 -it donggeliu/"${SUBJECT}" \
-  /bin/bash -c 'cd aflnet_legion; git --no-pager log -1 --format=%ad')"
+AFLNet_Legion_VERSION="AFLNet_Legion Version: $(docker run --cpus=1 -it donggeliu/"${SUBJECT}" /bin/bash \
+  -c 'cd aflnet_legion;{ git rev-parse --abbrev-ref HEAD; git --no-pager log -1 --format=%ad; } | sed ":a;N;s/\n/ - /;ba"')"
 echo "${AFLNet_Legion_VERSION}"
+
+ProFuzzBench_VERSION="ProFuzzBench Version : $( { git rev-parse --abbrev-ref HEAD; git --no-pager log -1 --format=%ad; } | sed ':a;N;s/\n/ - /;ba' )"
+ProFuzzBench_CLEAN="ProFuzzBench Clean   : $(if [ -z "$(git status --porcelain)" ]; then echo 'True'; else echo 'False'; fi)"
+echo "$ProFuzzBench_VERSION"
+echo "$ProFuzzBench_CLEAN"
+git status --porcelain 1>&2
+git diff --color "$PROFUZZBENCH" 1>&2
 
 
 # ========== Step 2: Prepare Fuzzing Parameters ========== #
@@ -120,8 +127,17 @@ fi
   cd "${RESULT_DIR}" || exit
   echo "Plotting time: ${TIME_MINUTE} minutes"
 
-  profuzzbench_plot.py -i results.csv -p "${SUBJECT}" -r "$RUNS" -c "${TIME_MINUTE}" -s 1 \
-    -o "${SUBJECT}_${TIME_STAMP}.png" -m "${MESSAGE}" -v "${AFLNet_Legion_VERSION}"
+  stats_plot.py -i results.csv -p "${SUBJECT}" -r "$RUNS" -c "${TIME_MINUTE}" -s 1 \
+    -o "${SUBJECT}_${TIME_STAMP}_stats.png" \
+    -m "$MESSAGE" -lv "$AFLNet_Legion_VERSION" -pv "$ProFuzzBench_VERSION" -pc "$ProFuzzBench_CLEAN"
+
+  each_plot.py -i results.csv -p "${SUBJECT}" -r "$RUNS" -c "${TIME_MINUTE}" -s 1 \
+    -o "${SUBJECT}_${TIME_STAMP}_each.png" \
+    -m "$MESSAGE" -lv "$AFLNet_Legion_VERSION" -pv "$ProFuzzBench_VERSION" -pc "$ProFuzzBench_CLEAN"
+
+  coin_plot.py -i results.csv -p "${SUBJECT}" -r "$RUNS" -c "${TIME_MINUTE}" -s 1 \
+    -o "${SUBJECT}_${TIME_STAMP}_coin.png" \
+    -m "$MESSAGE" -lv "$AFLNet_Legion_VERSION" -pv "$ProFuzzBench_VERSION" -pc "$ProFuzzBench_CLEAN"
 )
 
 # ========== Step 6: Save the stats ========== #

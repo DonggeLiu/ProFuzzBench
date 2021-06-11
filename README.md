@@ -162,7 +162,7 @@ time,subject,fuzzer,run,cov_type,cov
 
 ### Step-2.3. Analyze the results
 
-The results collected in step 3 (i.e., results.csv) can be used for plotting. For instance, we provide [a sample Python script](scripts/analysis/profuzzbench_plot.py) to plot code coverage over time. Use the following command to plot the results and save it to a file.
+The results collected in step 3 (i.e., results.csv) can be used for plotting. For instance, we provide [a sample Python script](scripts/analysis/each_plot.py) to plot code coverage over time. Use the following command to plot the results and save it to a file.
 
 ```
 cd $PFBENCH/results-lightftp
