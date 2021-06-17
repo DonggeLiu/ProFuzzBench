@@ -101,7 +101,7 @@ def main(csv_file, put, runs, cut_off, step, out_file,
         subject, message, legion_version[:-1], profuzzbench_version, profuzzbench_clean)
     fig.suptitle(title)
 
-    for data_frame in [mean_df, ci_df]:
+    for data_frame in [ci_df, mean_df]:
         legends = [[], [], [], []]
         alpha = 0.2 if data_frame is each_df else 1
         if data_frame is max_df or data_frame is min_df:
@@ -184,10 +184,10 @@ def main(csv_file, put, runs, cut_off, step, out_file,
                 axes[1, 1].set_xlabel('Time (in min)')
                 axes[1, 1].set_ylabel('Line coverage (%)')
 
-            for i in range(0, 2):
-                for j in range(0, 2):
-                    axes[j, i].legend(tuple(legends[2 * i + j]), loc='best')
-                    axes[j, i].grid()
+    for i in range(0, 2):
+        for j in range(0, 2):
+            axes[j, i].legend(tuple(legends[2 * i + j]), loc='best')
+            axes[j, i].grid()
 
     # Save to file
     plt.savefig(out_file)
