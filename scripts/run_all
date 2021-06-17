@@ -138,6 +138,9 @@ fi
   coin_plot.py -i results.csv -p "${SUBJECT}" -r "$RUNS" -c "${TIME_MINUTE}" -s 1 \
     -o "${SUBJECT}_${TIME_STAMP}_coin.png" \
     -m "$MESSAGE" -lv "$AFLNet_Legion_VERSION" -pv "$ProFuzzBench_VERSION" -pc "$ProFuzzBench_CLEAN"
+  profuzzbench_plot.py -i results.csv -p "${SUBJECT}" -r "$RUNS" -c "${TIME_MINUTE}" -s 1 \
+    -o "${SUBJECT}_${TIME_STAMP}_plain.png" \
+    -m "$MESSAGE" -lv "$AFLNet_Legion_VERSION" -pv "$ProFuzzBench_VERSION" -pc "$ProFuzzBench_CLEAN"
 )
 
 # ========== Step 6: Save the stats ========== #
