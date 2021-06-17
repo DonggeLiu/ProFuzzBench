@@ -62,24 +62,25 @@ def main(csv_file, put, runs, cut_off, step, out_file,
 
 
   for key, grp in mean_df.groupby(['fuzzer', 'cov_type']):
+    colour = 'C3' if 'legion' in key[0] else 'C0'
     if key[1] == 'b_abs':
-      axes[0, 0].plot(grp['time'], grp['cov'])
+      axes[0, 0].plot(grp['time'], grp['cov'], color=colour)
       #axes[0, 0].set_title('Edge coverage over time (#edges)')
       axes[0, 0].set_xlabel('Time (in min)')
       axes[0, 0].set_ylabel('#edges')
     if key[1] == 'b_per':
-      axes[1, 0].plot(grp['time'], grp['cov'])
+      axes[1, 0].plot(grp['time'], grp['cov'], color=colour)
       #axes[1, 0].set_title('Edge coverage over time (%)')
       axes[1, 0].set_ylim([0,100])
       axes[1, 0].set_xlabel('Time (in min)')
       axes[1, 0].set_ylabel('Edge coverage (%)')
     if key[1] == 'l_abs':
-      axes[0, 1].plot(grp['time'], grp['cov'])
+      axes[0, 1].plot(grp['time'], grp['cov'], color=colour)
       #axes[0, 1].set_title('Line coverage over time (#lines)')
       axes[0, 1].set_xlabel('Time (in min)')
       axes[0, 1].set_ylabel('#lines')
     if key[1] == 'l_per':
-      axes[1, 1].plot(grp['time'], grp['cov'])
+      axes[1, 1].plot(grp['time'], grp['cov'], color=colour)
       #axes[1, 1].set_title('Line coverage over time (%)')
       axes[1, 1].set_ylim([0,100])
       axes[1, 1].set_xlabel('Time (in min)')

@@ -111,18 +111,18 @@ def main(csv_file, put, runs, cut_off, step, out_file,
         else:
             line_style = '-'
         for key, grp in data_frame.groupby(['fuzzer', 'cov_type']):
+            colour = 'C3' if 'legion' in key[0] else 'C0'
+            alpha = 0.2
             if key[1] == 'b_abs':
                 if data_frame is ci_df:
                     low = [ci[0] for ci in grp['cov']]
                     high = [ci[1] for ci in grp['cov']]
-                    print(key[0], 'legion' in key[0])
                     axes[0, 0].fill_between(grp['time'], low, high,
-                                            color='red' if 'legion' in key[0] else 'black', alpha=0.2)
+                                            color=colour, alpha=alpha)
                 else:
                     axes[0, 0].plot(grp['time'],
                                     grp['cov'],
-                                    color='red' if 'legion' in key[0] else '0.7',
-                                    alpha=alpha,
+                                    color=colour,
                                     linestyle=line_style)
                 legends[0].append(key[0])
                 # axes[0, 0].set_title('Edge coverage over time (#edges)')
@@ -133,14 +133,12 @@ def main(csv_file, put, runs, cut_off, step, out_file,
                     # pdb.set_trace()
                     low = [ci[0] for ci in grp['cov']]
                     high = [ci[1] for ci in grp['cov']]
-                    print(key[0], 'legion' in key[0])
                     axes[1, 0].fill_between(grp['time'], low, high,
-                                            color='red' if 'legion' in key[0] else 'black', alpha=0.2)
+                                            color=colour, alpha=alpha)
                 else:
                     axes[1, 0].plot(grp['time'],
                                     grp['cov'],
-                                    color='red' if 'legion' in key[0] else '0.7',
-                                    alpha=alpha,
+                                    color=colour,
                                     linestyle=line_style)
                 legends[1].append(key[0])
                 axes[1, 0].set_ylim([0, 100])
@@ -152,14 +150,12 @@ def main(csv_file, put, runs, cut_off, step, out_file,
                     # pdb.set_trace()
                     low = [ci[0] for ci in grp['cov']]
                     high = [ci[1] for ci in grp['cov']]
-                    print(key[0], 'legion' in key[0])
                     axes[0, 1].fill_between(grp['time'], low, high,
-                                            color='red' if 'legion' in key[0] else 'black', alpha=0.2)
+                                            color=colour, alpha=alpha)
                 else:
                     axes[0, 1].plot(grp['time'],
                                     grp['cov'],
-                                    color='red' if 'legion' in key[0] else '0.7',
-                                    alpha=alpha,
+                                    color=colour,
                                     linestyle=line_style)
                 legends[2].append(key[0])
                 # axes[0, 0].set_title('Edge coverage over time (#edges)')
@@ -170,14 +166,12 @@ def main(csv_file, put, runs, cut_off, step, out_file,
                     # pdb.set_trace()
                     low = [ci[0] for ci in grp['cov']]
                     high = [ci[1] for ci in grp['cov']]
-                    print(key[0], 'legion' in key[0])
                     axes[1, 1].fill_between(grp['time'], low, high,
-                                            color='red' if 'legion' in key[0] else 'black', alpha=0.2)
+                                            color=colour, alpha=alpha)
                 else:
                     axes[1, 1].plot(grp['time'],
                                     grp['cov'],
-                                    color='red' if 'legion' in key[0] else '0.7',
-                                    alpha=alpha,
+                                    color=colour,
                                     linestyle=line_style)
                 legends[3].append(key[0])
                 axes[1, 1].set_ylim([0, 100])

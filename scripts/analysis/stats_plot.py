@@ -92,10 +92,11 @@ def main(csv_file, put, runs, cut_off, step, out_file,
         else:
             line_style = '-'
         for key, grp in data_frame.groupby(['fuzzer', 'cov_type']):
+            colour = 'C3' if 'legion' in key[0] else 'C0'
             if key[1] == 'b_abs':
                 axes[0, 0].plot(grp['time'],
                                 grp['cov'],
-                                color='red' if 'legion' in key[0] else '0.75',
+                                color=colour,
                                 alpha=alpha,
                                 linestyle=line_style)
                 legends[0].append(key[0])
@@ -105,7 +106,7 @@ def main(csv_file, put, runs, cut_off, step, out_file,
             if key[1] == 'b_per':
                 axes[1, 0].plot(grp['time'],
                                 grp['cov'],
-                                color='red' if 'legion' in key[0] else '0.75',
+                                color=colour,
                                 alpha=alpha,
                                 linestyle=line_style)
                 legends[1].append(key[0])
@@ -116,7 +117,7 @@ def main(csv_file, put, runs, cut_off, step, out_file,
             if key[1] == 'l_abs':
                 axes[0, 1].plot(grp['time'],
                                 grp['cov'],
-                                color='red' if 'legion' in key[0] else '0.75',
+                                color=colour,
                                 alpha=alpha,
                                 linestyle=line_style)
                 legends[2].append(key[0])
@@ -126,7 +127,7 @@ def main(csv_file, put, runs, cut_off, step, out_file,
             if key[1] == 'l_per':
                 axes[1, 1].plot(grp['time'],
                                 grp['cov'],
-                                color='red' if 'legion' in key[0] else '0.75',
+                                color=colour,
                                 alpha=alpha,
                                 linestyle=line_style)
                 legends[3].append(key[0])
