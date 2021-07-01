@@ -20,11 +20,10 @@ container_ids=()
 
 #create one container for each run
 for i in $(seq 1 "$RUNS"); do
-  mkdir -p "${SAVETO}/${FUZZER}-${i}/"
   id=$(docker run \
     --cpus=1 \
     -d \
-    -e FUZZER_LOG="$OUTDIR_PARENT/log.ansi" \
+    -e FUZZER_LOG="$OUTDIR_PARENT/$OUTDIR/log.ansi" \
     --name "${FUZZER/aflnet_legion/legion}_$((TIMEOUT / 60))MIN_${i}_${DOCIMAGE/donggeliu\/}" \
     -it \
     "$DOCIMAGE" \
@@ -45,8 +44,6 @@ echo "${FUZZER}: Collecting results and save them to ${SAVETO}"
 index=1
 for id in "${container_ids[@]}"; do
   echo "${FUZZER}: Collecting results from container ${id} to ${SAVETO}/${FUZZER}-${index}/"
-  docker cp "${id}:$OUTDIR_PARENT/log.ansi" " ${SAVETO}/${FUZZER}-${index}/log.ansi"
-  docker cp "${id}:/home/ubuntu/fuzzing_error" " ${SAVETO}/${FUZZER}-${index}/fuzzing_error"
   docker cp "${id}:/home/ubuntu/experiments/${OUTDIR}.tar.gz" "${SAVETO}/${OUTDIR}_${index}.tar.gz"
   index=$((index+1))
 done

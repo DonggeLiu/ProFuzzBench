@@ -15,6 +15,8 @@ strstr() {
 PARAMS=()
 for i in $OPTIONS; do PARAMS+=("$i"); done
 
+mkdir -p "$WORKDIR/LightFTP/Source/Release/$OUTDIR/"
+
 #Commands for afl-based fuzzers (e.g., aflnet, aflnwe)
 if strstr "$FUZZER" "afl"; then
   #Step-1. Do Fuzzing
@@ -23,14 +25,12 @@ if strstr "$FUZZER" "afl"; then
   echo "timeout -k 0 $TIMEOUT /home/ubuntu/${FUZZER}/afl-fuzz -d -i ${WORKDIR}/in-ftp -x ${WORKDIR}/ftp.dict" \
     "-o $OUTDIR -N tcp://127.0.0.1/2200 ${PARAMS[*]} ./fftp fftp.conf 2200"
   timeout -k 0 "$TIMEOUT" "/home/ubuntu/${FUZZER}/afl-fuzz" -d -i "${WORKDIR}/in-ftp" -x "${WORKDIR}/ftp.dict" \
-    -o "$OUTDIR" -N tcp://127.0.0.1/2200 "${PARAMS[@]}" ./fftp fftp.conf 2200 2>/home/ubuntu/fuzzing_error
+    -o "$OUTDIR" -N tcp://127.0.0.1/2200 "${PARAMS[@]}" ./fftp fftp.conf 2200 2>"$WORKDIR/LightFTP/Source/Release/$OUTDIR/fuzzing_error"
   #Wait for the fuzzing process
   wait 
 
   #Step-2. Collect code coverage over time
   #Move to gcov folder
-  mv /home/ubuntu/fuzzing_error "${WORKDIR}/LightFTP/Source/Release/${OUTDIR}/"
-  mv "$FUZZER_LOG" "${WORKDIR}/LightFTP/Source/Release/${OUTDIR}/"
   cd "$WORKDIR/LightFTP-gcov/Source/Release" || exit 1
 
   #The last argument passed to cov_script should be 0 if the fuzzer is afl/nwe and it should be 1 if the fuzzer is based on aflnet
