@@ -49,7 +49,7 @@ convert() {
 for fuzzer in $fuzzers; do 
   for i in $(seq 1 $runs); do 
     printf "\nProcessing out-${prog}-${fuzzer}-${i} ...\n"
-    tar -zxvf "out-${prog}-${fuzzer}_${i}.tar.gz"
+    tar -zxvf "out-${prog}-${fuzzer}_${i}.tar.gz" > /dev/null
     mv -f "out-${prog}-${fuzzer}" "${fuzzer}-${i}"
     #rm -rf "out-${prog}-${fuzzer}" "out-${prog}-${fuzzer}_${i}.tar.gz"
     #combine all csv files
