@@ -57,7 +57,7 @@ echo "$ProFuzzBench_VERSION"
 echo "$ProFuzzBench_CLEAN"
 git status --porcelain 1>&2
 git diff --color "$PROFUZZBENCH" 1>&2
-
+echo "\n==========\n" 1>&2
 
 # ========== Step 2: Prepare Fuzzing Parameters ========== #
 TIME_SECONDS=$((TIME_MINUTE * 60))
