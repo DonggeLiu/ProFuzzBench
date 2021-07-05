@@ -18,7 +18,13 @@ FUZZERS = ['AFLNet', 'AFLNet_Legion']
 
 
 def main(csv_file, put, runs, cut_off, step, out_file,
-         message, legion_version, profuzzbench_version, profuzzbench_clean):    # Read the results
+         message, legion_version, profuzzbench_version, profuzzbench_clean, excluded_fuzzer, excluded_run):
+
+    excluded_fuzzer = excluded_fuzzer if excluded_fuzzer else []
+    excluded_run = excluded_run if excluded_run else []
+    excluded_pairs = list(zip(excluded_fuzzer, excluded_run))
+
+    # Read the results
     df = read_csv(csv_file)
 
     # Calculate the mean of code coverage
@@ -49,6 +55,8 @@ def main(csv_file, put, runs, cut_off, step, out_file,
                 ci_low_list.append((subject, fuzzer, cov_type, 0, 0.0))
                 ci_high_list.append((subject, fuzzer, cov_type, 0, 0.0))
                 for run in range(1, runs + 1, 1):
+                    if (fuzzer, str(run)) in excluded_pairs:
+                        continue
                     each_list.append((subject, "{}_{}".format(fuzzer, run), cov_type, 0, 0.0))
 
                 for time in range(1, cut_off + 1, step):
@@ -57,6 +65,8 @@ def main(csv_file, put, runs, cut_off, step, out_file,
                     cov_list = []
 
                     for run in range(1, runs + 1, 1):
+                        if (fuzzer, str(run)) in excluded_pairs:
+                            continue
                         cov_each = 0
                         # get run-specific data frame
                         df2 = df1[df1['run'] == run]
@@ -79,7 +89,7 @@ def main(csv_file, put, runs, cut_off, step, out_file,
                     mean_list.append((subject, fuzzer, cov_type, time, cov_total / run_count))
                     max_list.append((subject, fuzzer, cov_type, time, max(cov_list)))
                     min_list.append((subject, fuzzer, cov_type, time, min(cov_list)))
-                    median_list.append((subject, fuzzer, cov_type, time, sorted(cov_list)[runs//2]))
+                    median_list.append((subject, fuzzer, cov_type, time, sorted(cov_list)[run_count//2]))
 
                     ci = st.t.interval(0.95, len(cov_list)-1, loc=np.mean(cov_list), scale=st.sem(cov_list))
                     ci_list.append((subject, fuzzer, cov_type, time, ci))
@@ -200,6 +210,8 @@ if __name__ == '__main__':
     parser.add_argument('-lv', '--legion_version', type=str, required=True, help="the version of AFLNet_Legion")
     parser.add_argument('-pv', '--profuzzbench_version', type=str, required=True, help="the version of ProFuzzBench")
     parser.add_argument('-pc', '--profuzzbench_clean', type=str, required=True, help="If ProFuzzBench is clean")
+    parser.add_argument('-ef', '--exclude_fuzzer', action='append', required=False, help="Exclude fuzzers")
+    parser.add_argument('-er', '--exclude_run', action='append', required=False, help="Exclude runs")
     args = parser.parse_args()
     main(args.csv_file, args.put, args.runs, args.cut_off, args.step, args.out_file,
-         args.message, args.legion_version, args.profuzzbench_version, args.profuzzbench_clean)
+         args.message, args.legion_version, args.profuzzbench_version, args.profuzzbench_clean, args.exclude_fuzzer, args.exclude_run)
