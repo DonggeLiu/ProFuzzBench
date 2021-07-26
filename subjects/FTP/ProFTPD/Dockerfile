@@ -2,13 +2,9 @@ FROM ubuntu:16.04
 
 ARG USR
 ARG PSW
-ARG UID
-ARG GID
 
 RUN echo "Github User    : $USR" \
-    && echo "Github Password: $PSW" \
-    && echo "Host User ID : $UID" \
-    && echo "Host Group ID: $GID"
+    && echo "Github Password: $PSW"
 
 
 # Install common dependencies
@@ -25,7 +21,8 @@ RUN apt-get -y update && \
     nano \
     net-tools \
     vim \
-    ftp
+    ftp \
+    python-jinja2
 
 # Install dependencies for AFLNet_Legion
 RUN cp /etc/apt/sources.list /etc/apt/sources.list~ \
@@ -40,12 +37,12 @@ RUN cp /etc/apt/sources.list /etc/apt/sources.list~ \
     && ln -s /opt/src/glibc-2.23 /build/glibc-e6zv40/
 
 # Set the timezone of docker for AFLNet_Legion loggings
-RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime
 ENV TZ=Australia/Melbourne
+RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime
 
 # Add a new user ubuntu, pass: ubuntu
-RUN groupadd -o -g $GID ubuntu && \
-    useradd -rm -d /home/ubuntu -s /bin/bash -G sudo -o -u $UID -g $GID ubuntu -p "$(openssl passwd -1 ubuntu)"
+RUN groupadd ubuntu && \
+    useradd -rm -d /home/ubuntu -s /bin/bash -g ubuntu -G sudo -u 1000 ubuntu -p "$(openssl passwd -1 ubuntu)"
 
 # Use ubuntu as default username
 USER ubuntu
@@ -68,6 +65,7 @@ RUN git clone https://github.com/profuzzbench/aflnwe.git && \
 # Set up AFLNet_Legion
 RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/AFLNet_Legion.git aflnet_legion && \
     cd aflnet_legion && \
+    git checkout Experiment && \
     make clean all && \
     cd llvm_mode && make
 
@@ -77,7 +75,6 @@ ENV AFLNET="/home/ubuntu/aflnet"
 ENV PATH="${PATH}:${AFLNET}:/home/ubuntu/.local/bin:${WORKDIR}:${WORKDIR}/proftpd"
 ENV AFL_PATH="${AFLNET}"
 ENV AFL_NET="${AFLNET}"
-ENV AFLNET_LEGION_LOG='/home/ubuntu/aflnet_legion/log.ansi'
 
 ENV AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1 \
     AFL_SKIP_CPUFREQ=1 \
@@ -86,7 +83,7 @@ ENV AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1 \
 RUN mkdir $WORKDIR && \
     mkdir /home/ubuntu/ftpshare && \
     chown -R ubuntu:ubuntu /home/ubuntu/ftpshare && \
-    pip install gcovr
+    pip install gcovr==4.2
 
 COPY --chown=ubuntu:ubuntu basic.conf ${WORKDIR}/
 COPY --chown=ubuntu:ubuntu in-ftp ${WORKDIR}/in-ftp
@@ -115,7 +112,7 @@ RUN cd ${WORKDIR} && \
 USER root
 WORKDIR /home/ubuntu
 
-RUN pip install gcovr
+RUN pip install gcovr==4.2
 
 # Download the scripts to process results
 RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/diff-gcov.git && \

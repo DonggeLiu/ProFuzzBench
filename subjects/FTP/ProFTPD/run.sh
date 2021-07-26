@@ -11,12 +11,18 @@ strstr() {
   return 0
 }
 
+# store the options to a set, which will be fed to afl-fuzz later
+PARAMS=()
+for i in $OPTIONS; do PARAMS+=("$i"); done
+
+mkdir -p "$WORKDIR/proftpd/$OUTDIR/"
+
 #Commands for afl-based fuzzers (e.g., aflnet, aflnwe)
 if $(strstr $FUZZER "afl"); then
   #Step-1. Do Fuzzing
   #Move to fuzzing folder
   cd $WORKDIR/proftpd
-  timeout -k 0 $TIMEOUT /home/ubuntu/${FUZZER}/afl-fuzz -d -i ${WORKDIR}/in-ftp -o $OUTDIR -x ${WORKDIR}/ftp.dict -N tcp://127.0.0.1/21 $OPTIONS proftpd -n -c ${WORKDIR}/basic.conf -X
+  timeout -k 0 $TIMEOUT /home/ubuntu/${FUZZER}/afl-fuzz -d -i ${WORKDIR}/in-ftp -o $OUTDIR -x ${WORKDIR}/ftp.dict -N tcp://127.0.0.1/21 "${PARAMS[@]}" proftpd -n -c ${WORKDIR}/basic.conf -X 2>"$WORKDIR/proftpd/$OUTDIR/fuzzing_error"
   #Wait for the fuzzing process
   wait 
 
