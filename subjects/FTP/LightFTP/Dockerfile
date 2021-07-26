@@ -20,7 +20,8 @@ RUN apt-get -y update && \
     python-pip \
     nano \
     net-tools \
-    vim
+    vim \
+    python-jinja2
 
 # Install dependencies for AFLNet_Legion
 RUN cp /etc/apt/sources.list /etc/apt/sources.list~ \
@@ -63,7 +64,14 @@ RUN git clone https://github.com/profuzzbench/aflnwe.git && \
 # Set up AFLNet_Legion
 RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/AFLNet_Legion.git aflnet_legion && \
     cd aflnet_legion && \
-    git checkout Best && \
+    #git checkout 0fb200afbe75c225723043876ccdf27065a27c50 && \
+    #git checkout b06a6ae7c5eec8c63e626a241eb4128e1249d280 && \
+    #git checkout 8f3cd3e0b7e7e25de624ffdac1a918e9d4bd538e && \
+    git checkout Experiment && \
+    #git checkout debug && \
+    #git checkout Best && \
+    #git checkout 43be89d5c2c86effbec34ea7f36b0e44b7db2522 && \
+    #git checkout 99c79578b86caabd2d0752f29dcbe3cef57e2c85 && \
     make clean all && \
     cd llvm_mode && make
 
