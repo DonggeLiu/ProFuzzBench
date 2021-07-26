@@ -11,12 +11,19 @@ strstr() {
   return 0
 }
 
+# store the options to a set, which will be fed to afl-fuzz later
+PARAMS=()
+for i in $OPTIONS; do PARAMS+=("$i"); done
+
+mkdir -p "$WORKDIR/live555/testProgs/$OUTDIR/"
+
 #Commands for afl-based fuzzers (e.g., aflnet, aflnwe)
 if $(strstr $FUZZER "afl"); then
   #Step-1. Do Fuzzing
   #Move to fuzzing folder
   cd $WORKDIR/live555/testProgs
-  timeout -k 0 $TIMEOUT /home/ubuntu/${FUZZER}/afl-fuzz -d -i ${WORKDIR}/in-rtsp -x ${WORKDIR}/rtsp.dict -o $OUTDIR -N tcp://127.0.0.1/8554 $OPTIONS ./testOnDemandRTSPServer 8554
+  timeout -k 0 $TIMEOUT /home/ubuntu/${FUZZER}/afl-fuzz -d -i ${WORKDIR}/in-rtsp -x ${WORKDIR}/rtsp.dict -o $OUTDIR -N tcp://127.0.0.1/8554 $OPTIONS ./testOnDemandRTSPServer 8554 2>"$WORKDIR/live555/testProgs/$OUTDIR/fuzzing_error"
+  #Wait for the fuzzing process
   wait 
 
   #Step-2. Collect code coverage over time
@@ -44,8 +51,18 @@ if $(strstr $FUZZER "afl"); then
   mkdir ${WORKDIR}/live555/testProgs/${OUTDIR}/cov_html/
   cp *.html ${WORKDIR}/live555/testProgs/${OUTDIR}/cov_html/
 
+  cd "${WORKDIR}/live555-gcov/" || exit
+  TIME_NOW=$(date +"%Y-%m-%d-%H=%M=%S")
+  mkdir "${TIME_NOW}"
+  cp "/home/ubuntu/diff-gcov/gcovr-new.py" "${WORKDIR}/live555-gcov/"
+  cp "/home/ubuntu/diff-gcov/process_gcovr_reports.py" "${WORKDIR}/live555-gcov/"
+  python gcovr-new.py -b -c -r .. > "${TIME_NOW}/gcovr_report-${FUZZER}.txt"
+  cp "${TIME_NOW}/gcovr_report-${FUZZER}.txt" "${WORKDIR}/live555/testProgs/${OUTDIR}"
+  # Run process_gcovr_reports.py outside the container
+
   #Step-3. Save the result to the ${WORKDIR} folder
   #Tar all results to a file
   cd ${WORKDIR}/live555/testProgs
   tar -zcvf ${WORKDIR}/${OUTDIR}.tar.gz ${OUTDIR}
+
 fi
