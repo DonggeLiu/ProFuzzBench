@@ -11,12 +11,19 @@ strstr() {
   return 0
 }
 
+# store the options to a set, which will be fed to afl-fuzz later
+PARAMS=()
+for i in $OPTIONS; do PARAMS+=("$i"); done
+
+mkdir -p "$WORKDIR/exim/$OUTDIR/"
+
 #Commands for afl-based fuzzers (e.g., aflnet, aflnwe)
 if $(strstr $FUZZER "afl"); then
   #Step-1. Do Fuzzing
   #Move to fuzzing folder
   cd $WORKDIR/exim
-  timeout -k 0 $TIMEOUT /home/ubuntu/${FUZZER}/afl-fuzz -d -i ${WORKDIR}/in-smtp -x ${WORKDIR}/smtp.dict -o $OUTDIR -N tcp://127.0.0.1/25 $OPTIONS exim -bd -oX 25
+  timeout -k 0 $TIMEOUT /home/ubuntu/${FUZZER}/afl-fuzz -d -i ${WORKDIR}/in-smtp -x ${WORKDIR}/smtp.dict -o $OUTDIR -N tcp://127.0.0.1/25 $OPTIONS exim -bd -oX 25 2>"$WORKDIR/exim/$OUTDIR/fuzzing_error"
+  #Wait for the fuzzing process
   wait
 
   #Step-2. Compile Exim for code coverage analysis
@@ -39,8 +46,19 @@ if $(strstr $FUZZER "afl"); then
   mkdir ${WORKDIR}/exim/${OUTDIR}/cov_html/
   cp *.html ${WORKDIR}/exim/${OUTDIR}/cov_html/
 
+
+  cd "${WORKDIR}/exim-gcov/" || exit
+  TIME_NOW=$(date +"%Y-%m-%d-%H=%M=%S")
+  mkdir "${TIME_NOW}"
+  cp "/home/ubuntu/diff-gcov/gcovr-new.py" "${WORKDIR}/exim-gcov/"
+  cp "/home/ubuntu/diff-gcov/process_gcovr_reports.py" "${WORKDIR}/exim-gcov/"
+  python gcovr-new.py -b -c -r .. > "${TIME_NOW}/gcovr_report-${FUZZER}.txt"
+  cp "${TIME_NOW}/gcovr_report-${FUZZER}.txt" "${WORKDIR}/exim/${OUTDIR}"
+  # Run process_gcovr_reports.py outside the container
+
   #Step-4. Save the result to the ${WORKDIR} folder
   #Tar all results to a file
   cd ${WORKDIR}/exim
   tar -zcvf ${WORKDIR}/${OUTDIR}.tar.gz ${OUTDIR}
+
 fi
