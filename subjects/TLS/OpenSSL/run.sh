@@ -5,17 +5,25 @@ OUTDIR=$2     #name of the output folder
 OPTIONS=$3    #all configured options -- to make it flexible, we only fix some options (e.g., -i, -o, -N) in this script
 TIMEOUT=$4    #time for fuzzing
 SKIPCOUNT=$5  #used for calculating cov over time. e.g., SKIPCOUNT=5 means we run gcovr after every 5 test cases
+
 strstr() {
   [ "${1#*$2*}" = "$1" ] && return 1
   return 0
 }
+
+# store the options to a set, which will be fed to afl-fuzz later
+PARAMS=()
+for i in $OPTIONS; do PARAMS+=("$i"); done
+
+mkdir -p "$WORKDIR/openssl/$OUTDIR/"
 
 #Commands for afl-based fuzzers (e.g., aflnet, aflnwe)
 if $(strstr $FUZZER "afl"); then
   #Step-1. Do Fuzzing
   #Move to fuzzing folder
   cd $WORKDIR/openssl
-  timeout -k 0 $TIMEOUT /home/ubuntu/${FUZZER}/afl-fuzz -d -i ${WORKDIR}/in-tls -x ${WORKDIR}/tls.dict -o $OUTDIR -N tcp://127.0.0.1/4433 $OPTIONS ./apps/openssl s_server -key key.pem -cert cert.pem -4 -naccept 1 -no_anti_replay
+  timeout -k 0 $TIMEOUT /home/ubuntu/${FUZZER}/afl-fuzz -d -i ${WORKDIR}/in-tls -x ${WORKDIR}/tls.dict -o $OUTDIR -N tcp://127.0.0.1/4433 "${PARAMS[@]}" ./apps/openssl s_server -key key.pem -cert cert.pem -4 -naccept 1 -no_anti_replay 2>"$WORKDIR/openssl/$OUTDIR/fuzzing_error"
+  #Wait for the fuzzing process
   wait 
 
   #Step-2. Collect code coverage over time
