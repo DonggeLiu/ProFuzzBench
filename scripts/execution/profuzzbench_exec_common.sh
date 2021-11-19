@@ -19,12 +19,12 @@ echo "${FUZZER} will run for ${TIMEOUT} seconds with ${OPTIONS}"
 container_ids=()
 
 #create one container for each run
-for i in $(seq 1 "$RUNS"); do
+for i in $(seq -f "%02g" 1 "$RUNS"); do
   id=$(docker run \
     --cpus=1 \
     -d \
     -e FUZZER_LOG="$OUTDIR_PARENT/$OUTDIR/log.ansi" \
-    --name "${FUZZER/aflnet_legion/legion}_$((TIMEOUT / 60))MIN_${i}_${DOCIMAGE/donggeliu\/}" \
+    --name "${FUZZER/aflnet_legion/legion}_$((TIMEOUT / 60))MIN_${DOCIMAGE/donggeliu\/}_${i}_" \
     -it \
     "$DOCIMAGE" \
     /bin/bash \

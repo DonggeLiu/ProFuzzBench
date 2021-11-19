@@ -8,10 +8,14 @@ LOG_LVL=$4      # Log level
 IGN_AST=$5      # Ignore assertions
 FUZZ_M3=$6      # Fuzz M3
 RHO=$7          # Rho
-SUBJECT=$8      # Experiment target
+LG_NODE_SEL=$8  # Node selection algorithm of AFLNetLegion (0:RANDOM; 1:UCT)
+LG_SEED_SEL=$9  # Seed selection algorithm of AFLNetLegion (0:RANDOM; 1:UCB)
+AN_NODE_SEL=$10 # Node selection algorithm of AFLNet (1:RANDOM; 2:ROUND_ROBIN; 3:FAVOUR)
+AN_SEED_SEL=$11 # Seed selection algorithm of AFLNet (1:RANDOM; 2:ROUND_ROBIN; 3:FAVOUR)
+SUBJECT=$12     # Experiment target
 TREE_DP=5       # Log tree depth
 PROFUZZBENCH=$(git rev-parse --show-toplevel)
-RUNS=4
+RUNS=10
 
 date # Log the starting time
 
@@ -40,6 +44,43 @@ else
   MESSAGE="${MESSAGE}  Fuzz M3: False;"
 fi
 
+if [ "${LG_NODE_SEL}" = "0" ]; then
+  MESSAGE="${MESSAGE}  Legion Node Selection: RANDOM;"
+elif [ "${LG_NODE_SEL}" = "1" ]; then
+  MESSAGE="${MESSAGE}  Legion Node Selection: UCT;"
+else
+  MESSAGE="${MESSAGE}  Legion Node Selection: UNDEFINED;"
+fi
+
+if [ "${LG_SEED_SEL}" = "0" ]; then
+  MESSAGE="${MESSAGE}  Legion Seed Selection: RANDOM;"
+elif [ "${LG_SEED_SEL}" = "1" ]; then
+  MESSAGE="${MESSAGE}  Legion Seed Selection: UCB;"
+else
+  MESSAGE="${MESSAGE}  Legion Seed Selection: UNDEFINED;"
+fi
+
+if [ "${AN_NODE_SEL}" = "1" ]; then
+  MESSAGE="${MESSAGE}  AFLNet Node Selection: RANDOM;"
+elif [ "${AN_NODE_SEL}" = "2" ]; then
+  MESSAGE="${MESSAGE}  AFLNet Node Selection: ROUND_ROBIN;"
+elif [ "${AN_NODE_SEL}" = "3" ]; then
+  MESSAGE="${MESSAGE}  AFLNet Node Selection: FAVOUR;"
+else
+  MESSAGE="${MESSAGE}  AFLNet Node Selection: UNDEFINED;"
+fi
+
+if [ "${AN_SEED_SEL}" = "1" ]; then
+  MESSAGE="${MESSAGE}  AFLNet Seed Selection: RANDOM;"
+elif [ "${AN_SEED_SEL}" = "2" ]; then
+  MESSAGE="${MESSAGE}  AFLNet Seed Selection: ROUND_ROBIN;"
+elif [ "${AN_SEED_SEL}" = "3" ]; then
+  MESSAGE="${MESSAGE}  AFLNet Seed Selection: FAVOUR;"
+else
+  MESSAGE="${MESSAGE}  AFLNet Seed Selection: UNDEFINED;"
+fi
+
+
 if [ "${ONLY_LEGION}" = "1" ]; then
   MESSAGE="${MESSAGE}  Legion Only: True;"
 else
@@ -47,7 +88,7 @@ else
 fi
 echo "${MESSAGE}"
 
-AFLNet_Legion_VERSION="AFLNet_Legion Version: $(docker run --cpus=1 -it donggeliu/"${SUBJECT}" /bin/bash \
+AFLNet_Legion_VERSION="AFLNet_Legion Version: $(docker run --cpus=1 --name "GetAFLNetLegionVersion" -it donggeliu/"${SUBJECT}" /bin/bash \
   -c 'cd aflnet_legion;{ git rev-parse --abbrev-ref HEAD; git --no-pager log -1 --format=%ad; } | sed ":a;N;s/\n/ - /;ba"')"
 echo "${AFLNet_Legion_VERSION}"
 
@@ -62,7 +103,7 @@ echo "\n==========\n" 1>&2
 # ========== Step 2: Prepare Fuzzing Parameters ========== #
 TIME_SECONDS=$((TIME_MINUTE * 60))
 
-LEGION_PARAMS="-l ${LOG_LVL} -p ${TREE_DP} -r ${RHO}"
+LEGION_PARAMS="-l ${LOG_LVL} -p ${TREE_DP} -r ${RHO} -O ${LG_NODE_SEL}  -e ${LG_SEED_SEL}"
 if [ "${IGN_AST}" = "1" ]; then
   LEGION_PARAMS="${LEGION_PARAMS} -a"
 fi
@@ -75,8 +116,12 @@ if [ "${SUBJECT}" = "lightftp" ]; then
   AFLNET_OPTIONS="\"-P FTP -D 10000 -q 3 -s 3 -E -K -c ./ftpclean.sh\""
   LEGION_OPTIONS="\"${LEGION_PARAMS} -P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh\""
   OUTDIR_PARENT="/home/ubuntu/experiments/LightFTP/Source/Release"
+elif [ "${SUBJECT}" = "lightftpvexp" ]; then
+  AFLNET_OPTIONS="\"-P FTP -D 10000 -q 3 -s 3 -E -K -c ./ftpclean.sh\""
+  LEGION_OPTIONS="\"${LEGION_PARAMS} -P FTP -D 10000 -q 4 -s 4 -E -K -c ./ftpclean.sh\""
+  OUTDIR_PARENT="/home/ubuntu/experiments/LightFTP/Source/Release"
 elif  [ "${SUBJECT}" = "proftpd" ]; then
-  AFLNET_OPTIONS="\"-t 1000+ -m none -P FTP -D 10000 -q 3 -s 3 -E -K -c clean\""
+  AFLNET_OPTIONS="\"-t 1000+ -m none -P FTP -D 10000 -q ${AN_NODE_SEL} -s ${AN_SEED_SEL} -E -K -c clean\""
   LEGION_OPTIONS="\"${LEGION_PARAMS} -t 1000+ -m none -P FTP -D 10000 -q 4 -s 4 -E -K -c clean\""
   OUTDIR_PARENT="/home/ubuntu/experiments/proftpd"
 elif  [ "${SUBJECT}" = "openssl" ]; then
@@ -95,6 +140,18 @@ elif  [ "${SUBJECT}" = "live555" ]; then
   AFLNET_OPTIONS="\"-P RTSP -D 10000 -q 3 -s 3 -E -K -R\""
   LEGION_OPTIONS="\"${LEGION_PARAMS} -P RTSP -D 10000 -q 4 -s 4 -E -K -R\""
   OUTDIR_PARENT="/home/ubuntu/experiments/live555/testProgs"
+elif [ "${SUBJECT}" = "tinydtls" ]; then
+  AFLNET_OPTIONS="\"-P DTLS12 -D 10000 -q 3 -s 3 -E -K -W 30\""
+  LEGION_OPTIONS="\"${LEGION_PARAMS} -P DTLS12 -D 10000 -q 3 -s 3 -E -K -W 30\""
+  OUTDIR_PARENT="/home/ubuntu/experiments/"
+elif [ "${SUBJECT}" = "dnsmasq" ]; then
+  AFLNET_OPTIONS="\"-P DNS -D 10000 -K\""
+  LEGION_OPTIONS="\"${LEGION_PARAMS} -P DNS -D 10000 -K\""
+  OUTDIR_PARENT="/home/ubuntu/experiments/dnsmasq/src"
+elif [ "${SUBJECT}" = "dcmtk" ]; then
+  AFLNET_OPTIONS="\"-P DICOM -D 10000 -E -K\""
+  LEGION_OPTIONS="\"${LEGION_PARAMS} -P DICOM -D 10000 -E -K\""
+  OUTDIR_PARENT="/home/ubuntu/experiments/dcmtk/build/bin"
 else
   echo "Invalid subject: ${SUBJECT}"
   exit 1
