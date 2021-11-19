@@ -5,18 +5,26 @@ OUTDIR=$2     #name of the output folder
 OPTIONS=$3    #all configured options -- to make it flexible, we only fix some options (e.g., -i, -o, -N) in this script
 TIMEOUT=$4    #time for fuzzing
 SKIPCOUNT=$5  #used for calculating cov over time. e.g., SKIPCOUNT=5 means we run gcovr after every 5 test cases
+
 strstr() {
   [ "${1#*$2*}" = "$1" ] && return 1
   return 0
 }
+
+# store the options to a set, which will be fed to afl-fuzz later
+PARAMS=()
+for i in $OPTIONS; do PARAMS+=("$i"); done
+
+mkdir -p "$WORKDIR/$OUTDIR/"
 
 #Commands for afl-based fuzzers (e.g., aflnet, aflnwe)
 if $(strstr $FUZZER "afl"); then
   #Step-1. Do Fuzzing
   #Move to fuzzing folder
   cd $WORKDIR
-  timeout -k 0 $TIMEOUT /home/ubuntu/${FUZZER}/afl-fuzz -d -i ${WORKDIR}/in-dtls -o $OUTDIR -N udp://127.0.0.1/20220 $OPTIONS ./tinydtls/tests/dtls-server
-  wait 
+  timeout -k 0 $TIMEOUT /home/ubuntu/${FUZZER}/afl-fuzz -d -i ${WORKDIR}/in-dtls -o $OUTDIR -N udp://127.0.0.1/20220 $OPTIONS ./tinydtls/tests/dtls-server 2>"$WORKDIR/$OUTDIR/fuzzing_error"
+  #Wait for the fuzzing process
+  wait
 
   #Step-2. Collect code coverage over time
   #Move to gcov folder
@@ -34,6 +42,15 @@ if $(strstr $FUZZER "afl"); then
   gcovr -r $WORKDIR/tinydtls-gcov --html --html-details -o index.html
   mkdir ${WORKDIR}/${OUTDIR}/cov_html/
   cp *.html ${WORKDIR}/${OUTDIR}/cov_html/
+
+  cd "${WORKDIR}/tinydtls-gcov/" || exit
+  TIME_NOW=$(date +"%Y-%m-%d-%H=%M=%S")
+  mkdir "${TIME_NOW}"
+  cp "/home/ubuntu/diff-gcov/gcovr-new.py" "${WORKDIR}/tinydtls-gcov/"
+  cp "/home/ubuntu/diff-gcov/process_gcovr_reports.py" "${WORKDIR}/tinydtls-gcov/"
+  python gcovr-new.py -b -c -r .. > "${TIME_NOW}/gcovr_report-${FUZZER}.txt"
+  cp "${TIME_NOW}/gcovr_report-${FUZZER}.txt" "${WORKDIR}/${OUTDIR}"
+  # Run process_gcovr_reports.py outside the container
 
   #Step-3. Save the result to the ${WORKDIR} folder
   #Tar all results to a file

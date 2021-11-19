@@ -11,12 +11,18 @@ strstr() {
   return 0
 }
 
+# store the options to a set, which will be fed to afl-fuzz later
+PARAMS=()
+for i in $OPTIONS; do PARAMS+=("$i"); done
+
+mkdir -p "$WORKDIR/openssh/$OUTDIR/"
+
 #Commands for afl-based fuzzers (e.g., aflnet, aflnwe)
 if $(strstr $FUZZER "afl"); then
   #Step-1. Do Fuzzing
   #Move to fuzzing folder
   cd $WORKDIR/openssh
-  timeout -k 0 $TIMEOUT /home/ubuntu/${FUZZER}/afl-fuzz -d -i ${WORKDIR}/in-ssh -x ${WORKDIR}/ssh.dict -o $OUTDIR -N tcp://127.0.0.1/22 $OPTIONS ./sshd -d -e -p 22 -r -f sshd_config
+  timeout -k 0 $TIMEOUT /home/ubuntu/${FUZZER}/afl-fuzz -d -i ${WORKDIR}/in-ssh -x ${WORKDIR}/ssh.dict -o $OUTDIR -N tcp://127.0.0.1/22 $OPTIONS ./sshd -d -e -p 22 -r -f sshd_config 2>"$WORKDIR/openssh/$OUTDIR/fuzzing_error"
   wait 
 
   #Step-2. Collect code coverage over time
@@ -35,6 +41,13 @@ if $(strstr $FUZZER "afl"); then
   gcovr -r . --html --html-details -o index.html
   mkdir ${WORKDIR}/openssh/${OUTDIR}/cov_html/
   cp *.html ${WORKDIR}/openssh/${OUTDIR}/cov_html/
+
+  cd "${WORKDIR}/openssh-gcov/" || exit
+  TIME_NOW=$(date +"%Y-%m-%d-%H=%M=%S")
+  mkdir "${TIME_NOW}"
+  python gcovr-new.py -b -c -r .. > "${TIME_NOW}/gcovr_report-${FUZZER}.txt"
+  cp "${TIME_NOW}/gcovr_report-${FUZZER}.txt" "${WORKDIR}/openssh/${OUTDIR}"
+  # Rrun process_gcovr_reports.py outside the container
 
   #Step-3. Save the result to the ${WORKDIR} folder
   #Tar all results to a file

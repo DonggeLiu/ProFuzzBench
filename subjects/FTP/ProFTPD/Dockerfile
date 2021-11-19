@@ -65,7 +65,11 @@ RUN git clone https://github.com/profuzzbench/aflnwe.git && \
 # Set up AFLNet_Legion
 RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/AFLNet_Legion.git aflnet_legion && \
     cd aflnet_legion && \
-    git checkout Experiment && \
+    git checkout SaveAllInputsWithNewPathsToNewNodesAndParents && \
+    #git checkout thesis && \
+    #git checkout SaveAllInputsWithNewPaths && \
+    #git checkout d1d866beec20a46e0a1f519d86923b89e99fc512 && \
+    #git checkout Experiment && \
     make clean all && \
     cd llvm_mode && make
 

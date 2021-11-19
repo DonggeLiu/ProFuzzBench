@@ -1,5 +1,12 @@
 FROM ubuntu:16.04
 
+ARG USR
+ARG PSW
+
+RUN echo "Github User    : $USR" \
+    && echo "Github Password: $PSW"
+
+
 # Install common dependencies
 RUN apt-get -y update && \
     apt-get -y install sudo \ 
@@ -14,7 +21,24 @@ RUN apt-get -y update && \
     nano \
     net-tools \
     vim \
-    cmake
+    cmake \
+    python-jinja2
+
+# Install dependencies for AFLNet_Legion
+RUN cp /etc/apt/sources.list /etc/apt/sources.list~ \
+    && sed -Ei 's/^# deb-src /deb-src /' /etc/apt/sources.list \
+    && sed -ri '/^# deb-src .* xenial(-updates){0,1} main restricted$/s/^# //g' /etc/apt/sources.list \
+    && apt update \
+    && apt -y install libglib2.0-dev cmake vim tzdata gdb libc6-dbg dpkg-dev libgnutls28-dev \
+    && mkdir -p /opt/src \
+    && cd /opt/src \
+    && apt source libc6 \
+    && mkdir -p /build/glibc-e6zv40/ \
+    && ln -s /opt/src/glibc-2.23 /build/glibc-e6zv40/
+
+# Set the timezone of docker for AFLNet_Legion loggings
+ENV TZ=Australia/Melbourne
+RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime
 
 # Add a new user ubuntu, pass: ubuntu
 RUN groupadd ubuntu && \
@@ -26,7 +50,7 @@ WORKDIR /home/ubuntu
 ENV LLVM_CONFIG="llvm-config-3.8"
 
 # Set up fuzzers
-RUN git clone https://github.com/profuzzbench/aflnet.git && \
+RUN git clone https://github.com/Alan32Liu/aflnet.git && \
     cd aflnet && \
     make clean all && \
     cd llvm_mode && make
@@ -36,17 +60,26 @@ RUN git clone https://github.com/profuzzbench/aflnwe.git && \
     make clean all && \
     cd llvm_mode && make
 
+# Set up AFLNet_Legion
+RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/AFLNet_Legion.git aflnet_legion && \
+    cd aflnet_legion && \
+    git checkout Experiment && \
+    make clean all && \
+    cd llvm_mode && make
+
 # Set up environment variables for AFLNet
 ENV WORKDIR="/home/ubuntu/experiments"
 ENV AFLNET="/home/ubuntu/aflnet"
 ENV PATH="${PATH}:${AFLNET}:/home/ubuntu/.local/bin:${WORKDIR}"
 ENV AFL_PATH="${AFLNET}"
+ENV AFL_NET="${AFLNET}"
+
 ENV AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1 \
     AFL_SKIP_CPUFREQ=1 \
     AFL_NO_AFFINITY=1
 
 RUN mkdir $WORKDIR && \
-    pip install gcovr
+    pip install gcovr==4.2
 
 COPY --chown=ubuntu:ubuntu in-dicom ${WORKDIR}/in-dicom
 COPY --chown=ubuntu:ubuntu cov_script.sh ${WORKDIR}/cov_script
@@ -84,3 +117,8 @@ RUN cd $WORKDIR/dcmtk/build/bin && \
 RUN cd $WORKDIR/dcmtk-gcov/build/bin && \
     mkdir ACME_STORE && \
     cp $WORKDIR/dcmqrscp.cfg ./
+
+# Download the scripts to process results
+RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/diff-gcov.git && \
+    cp "/home/ubuntu/diff-gcov/gcovr-new.py" "${WORKDIR}/dcmtk-gcov/" && \
+    cp "/home/ubuntu/diff-gcov/process_gcovr_reports.py" "${WORKDIR}/dcmtk-gcov/"

@@ -67,7 +67,8 @@ RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/AFLNet_Legion.git aflne
     #git checkout 0fb200afbe75c225723043876ccdf27065a27c50 && \
     #git checkout b06a6ae7c5eec8c63e626a241eb4128e1249d280 && \
     #git checkout 8f3cd3e0b7e7e25de624ffdac1a918e9d4bd538e && \
-    git checkout Experiment && \
+    git checkout SaveAllInputsWithNewPathsToNewNodesAndParents && \
+    #git checkout Experiment && \
     #git checkout debug && \
     #git checkout Best && \
     #git checkout 43be89d5c2c86effbec34ea7f36b0e44b7db2522 && \
