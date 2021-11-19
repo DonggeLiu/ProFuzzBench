@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 
 import argparse
+import pdb
+
 from pandas import read_csv
 from pandas import DataFrame
 from pandas import Grouper
 from matplotlib import pyplot as plt
+from matplotlib.text import Text
 import pandas as pd
 
-FUZZERS = ['AFLNet', 'AFLNet_Legion']
+
+FUZZERS = [['AFLNet', 'AFLNet_Legion'], ['AFLNet', 'AFLNet_Legion'], ['AFLNet', 'AFLNet_Legion'], ['AFLNet', 'AFLNet_Legion']]
 #FUZZERS = ['AFLNet_Legion']
 
 
@@ -26,7 +30,7 @@ def main(csv_file, put, runs, cut_off, step, out_file,
   mean_list = []
 
   for subject in [put]:
-    for fuzzer in FUZZERS:
+    for fuzzer in FUZZERS[0]:
       fuzzer = fuzzer.lower()
       for cov_type in ['b_abs', 'b_per', 'l_abs', 'l_per']:
         #get subject & fuzzer & cov_type-specific dataframe
@@ -72,29 +76,51 @@ def main(csv_file, put, runs, cut_off, step, out_file,
     colour = 'C3' if 'legion' in key[0] else 'C0'
     if key[1] == 'b_abs':
       axes[0, 0].plot(grp['time'], grp['cov'], color=colour)
-      #axes[0, 0].set_title('Edge coverage over time (#edges)')
+      #axes[0, 0].annotate(grp['cov'].tolist()[-1], xy=(cut_off, grp['cov'].tolist()[-1] + 300*(0 if 'legion' in key[0] else -1)), color=colour)
+      if 'legion' in key[0]:
+        FUZZERS[0][1] =  FUZZERS[0][1] + ": {:0.2f}".format(grp['cov'].tolist()[-1])
+      else:
+        FUZZERS[0][0] = FUZZERS[0][0] + " "*12 + ": {:0.2f}".format(grp['cov'].tolist()[-1])
+      axes[0, 0].set_title('Edge coverage over time (#edges)')
       axes[0, 0].set_xlabel('Time (in min)')
       axes[0, 0].set_ylabel('#edges')
     if key[1] == 'b_per':
       axes[1, 0].plot(grp['time'], grp['cov'], color=colour)
-      #axes[1, 0].set_title('Edge coverage over time (%)')
+      #axes[1, 0].annotate(grp['cov'].tolist()[-1], xy=(cut_off, grp['cov'].tolist()[-1] + 5*(1 if 'legion' in key[0] else -1)), color=colour)
+      if 'legion' in key[0]:
+        FUZZERS[2][1] = FUZZERS[2][1] + ": {:0.2f}".format(grp['cov'].tolist()[-1])
+      else:
+        FUZZERS[2][0] = FUZZERS[2][0] + " "*12 + ": {:0.2f}".format(grp['cov'].tolist()[-1])
+      axes[1, 0].set_title('Edge coverage over time (%)')
       axes[1, 0].set_ylim([0,100])
       axes[1, 0].set_xlabel('Time (in min)')
       axes[1, 0].set_ylabel('Edge coverage (%)')
     if key[1] == 'l_abs':
       axes[0, 1].plot(grp['time'], grp['cov'], color=colour)
-      #axes[0, 1].set_title('Line coverage over time (#lines)')
+      #axes[0, 1].annotate(grp['cov'].tolist()[-1], xy=(cut_off, grp['cov'].tolist()[-1] + 300*(0 if 'legion' in key[0] else 0)), color=colour)
+      if 'legion' in key[0]:
+        FUZZERS[1][1] = FUZZERS[1][1] + ": {:0.2f}".format(grp['cov'].tolist()[-1])
+      else:
+        FUZZERS[1][0] = FUZZERS[1][0] + " "*12 + ": {:0.2f}".format(grp['cov'].tolist()[-1])
+      axes[0, 1].set_title('Line coverage over time (#lines)')
       axes[0, 1].set_xlabel('Time (in min)')
       axes[0, 1].set_ylabel('#lines')
     if key[1] == 'l_per':
       axes[1, 1].plot(grp['time'], grp['cov'], color=colour)
-      #axes[1, 1].set_title('Line coverage over time (%)')
+      #axes[1, 1].annotate(grp['cov'].tolist()[-1], xy=(cut_off, grp['cov'].tolist()[-1] + 5*(1 if 'legion' in key[0] else -1)), color=colour)
+      if 'legion' in key[0]:
+        FUZZERS[3][1] = FUZZERS[3][1] + ": {:0.2f}".format(grp['cov'].tolist()[-1])
+      else:
+        FUZZERS[3][0] = FUZZERS[3][0] + " "*12 + ": {:0.2f}".format(grp['cov'].tolist()[-1])
+      axes[1, 1].set_title('Line coverage over time (%)')
       axes[1, 1].set_ylim([0,100])
       axes[1, 1].set_xlabel('Time (in min)')
       axes[1, 1].set_ylabel('Line coverage (%)')
 
   for i, ax in enumerate(fig.axes):
-    ax.legend(tuple(FUZZERS), loc='best')
+    legend = ax.legend(tuple(FUZZERS[i]), loc='best')
+    for t in legend.get_texts():
+      t.set_color("C3" if "Legion" in t.get_text() else "C0")
     ax.grid()
 
   #Save to file

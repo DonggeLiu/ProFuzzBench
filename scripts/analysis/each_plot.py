@@ -67,7 +67,7 @@ def main(csv_file, put, runs, cut_off, step, out_file,
             run_count += 1
 
           #add a new row
-          mean_list.append((subject, fuzzer, cov_type, time, cov_total / run_count))
+          mean_list.append((subject, fuzzer, cov_type, time, (cov_total / run_count) if run_count else 0))
 
   #Convert the list to a dataframe
   mean_df = pd.DataFrame(mean_list, columns = ['subject', 'fuzzer', 'cov_type', 'time', 'cov'])
