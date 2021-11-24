@@ -1,12 +1,5 @@
 FROM ubuntu:16.04
 
-ARG USR
-ARG PSW
-
-RUN echo "Github User    : $USR" \
-    && echo "Github Password: $PSW"
-
-
 # Install common dependencies
 RUN apt-get -y update && \
     apt-get -y install sudo \ 
@@ -62,7 +55,7 @@ RUN git clone https://github.com/profuzzbench/aflnwe.git && \
     cd llvm_mode && make
 
 # Set up AFLNet_Legion
-RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/AFLNet_Legion.git aflnet_legion && \
+RUN git clone https://github.com/Alan32Liu/AFLNet_Legion.git aflnet_legion && \
     cd aflnet_legion && \
     #git checkout 0fb200afbe75c225723043876ccdf27065a27c50 && \
     #git checkout b06a6ae7c5eec8c63e626a241eb4128e1249d280 && \
@@ -129,6 +122,6 @@ RUN cd ${WORKDIR}/LightFTP-gcov/Source/Release && \
     cp ${AFLNET}/tutorials/lightftp/ftpclean.sh ./
 
 # Download the scripts to process results
-RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/diff-gcov.git && \
+RUN git clone https://github.com/Alan32Liu/diff-gcov.git && \
     cp "/home/ubuntu/diff-gcov/gcovr-new.py" "${WORKDIR}/LightFTP-gcov/Source/Release/" && \
     cp "/home/ubuntu/diff-gcov/process_gcovr_reports.py" "${WORKDIR}/LightFTP-gcov/Source/Release/"

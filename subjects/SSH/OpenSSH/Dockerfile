@@ -1,11 +1,5 @@
 FROM ubuntu:16.04
 
-ARG USR
-ARG PSW
-
-RUN echo $USR && echo $PSW
-
-
 # Install common dependencies
 RUN apt-get -y update && \
     apt-get -y install sudo \ 
@@ -61,7 +55,7 @@ RUN git clone https://github.com/profuzzbench/aflnwe.git && \
     cd llvm_mode && make
 
 # Set up AFLNet_Legion
-RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/AFLNet_Legion.git aflnet_legion && \
+RUN git clone https://github.com/Alan32Liu/AFLNet_Legion.git aflnet_legion && \
     cd aflnet_legion && \
     git checkout SaveAllInputsWithNewPathsToNewNodesAndParents && \
     # git checkout Experiment && \
@@ -122,7 +116,7 @@ RUN cd ${WORKDIR} && \
     make && \
     make install
 
-RUN git clone https://${USR}:${PSW}@github.com/Alan32Liu/diff-gcov.git && \
+RUN git clone https://github.com/Alan32Liu/diff-gcov.git && \
     cp "/home/ubuntu/diff-gcov/gcovr-new.py" "${WORKDIR}/openssh-gcov/" && \
     cp "/home/ubuntu/diff-gcov/process_gcovr_reports.py" "${WORKDIR}/openssh-gcov/"
 
