@@ -1,7 +1,10 @@
 # One command to run them all
 
-After building the docker image of a benchmark subject (e.g. `lightftp`), 
-the script `run_all` allows us to automatically run experiments with that subject, collect experiement results, and analyse results in one command.
+After:
+1. Building the docker image of a benchmark subject (e.g. the [README.md](https://github.com/Alan32Liu/ProFuzzBench/tree/temp/subjects/FTP/LightFTP) of `lightftp` ), 
+2. Creating a `Record` directory in the root of this repo (i.e. `/../ProFuzzBench/Record/`)
+
+The script `run_all` allows us to automatically run experiments with that subject, collect experiement results, and analyse results in one command.
 
 ## Command
 ### tl;df
@@ -9,7 +12,7 @@ the script `run_all` allows us to automatically run experiments with that subjec
 The command for a typical experiment looks like:
 
 ```bash
-run_all 0 x 1440 0 1 1 0.0025 1 1 3 3 proftpd
+run_all 0 x 1440 0 1 1 0.0025 1 1 3 3 lightftp
 ```
 
 where the parameters are explained as follows.
@@ -44,7 +47,7 @@ The command `run_all` takes 12 **command-line parameters** in the following orde
     * `3`: Favour
 12. Subject: the docker image name of the benchmark subject.
 
-It also has a few **in-script parameters**:
+It also has two **in-script parameters**:
 1. Tree Depth in the log of `AFLNetLegion`
 2. Number of trials to run in this experiment
 
