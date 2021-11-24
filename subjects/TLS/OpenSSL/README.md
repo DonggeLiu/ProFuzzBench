@@ -1,6 +1,6 @@
 Please carefully read the [main README.md](../../../README.md), which is stored in the benchmark's root folder, before following this subject-specific guideline.
 
-# Fuzzing OpenSSL TLS server with AFLNet and AFLnwe
+# Fuzzing OpenSSL TLS server with AFLNet and AFLNetLegion
 Please follow the steps below to run and collect experimental results for OpenSSL.
 
 ## Step-1. Build a docker image
