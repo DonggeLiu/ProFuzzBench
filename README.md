@@ -28,6 +28,7 @@ protocol-fuzzing-benchmark
 │   │       └── other files (e.g., patches, other subject-specific scripts)
 │   └── ...
 └── scripts: this folder contains all scripts to run experiments, collect & analyze results
+│   └── run_all
 │   └── execution
 │   │   └── profuzzbench_exec_common.sh: main script to spawn containers and run experiments on them
 │   │   └── ...
@@ -37,7 +38,17 @@ protocol-fuzzing-benchmark
 └── README.md
 ```
 
-# Tutorial - Fuzzing LightFTP server with [AFLNet](https://github.com/aflnet/aflnet) and [AFLNet_Legion](https://github.com/Alan32Liu/AFLNet_Legion), a network-enabled version of AFL
+# Build
+You need to build a docker image of a subject before benchmarking on it.
+We currently support `LightFTP`, `ProFTPD`, `OpenSSL`, `OpenSSH`, `Exim`, `Live555`, you can find them it `subjects/`.
+The instructions to build each docker image is provided in that directory.
+
+# Benchmarking
+After building a docker image of a benchmarking subject,
+use the `run_all` script in `scripts/` with the instructions provided in the same directory.
+
+
+<!-- # Tutorial - Fuzzing LightFTP server with [AFLNet](https://github.com/aflnet/aflnet) and [AFLNet_Legion](https://github.com/Alan32Liu/AFLNet_Legion), a network-enabled version of AFL
 
 Follow the steps below to run and collect experimental results for LightFTP, which is a lightweight File Transfer Protocol (FTP) server. The similar steps should be followed to run experiments on other subjects. Each subject program comes with a README.md file showing subject-specific commands to run experiments.
 
@@ -226,3 +237,4 @@ If everything works, there should be no error messages and all the results are s
 Each experiment has two parts: fuzzing and code coverage analysis. The fuzzing part should complete after the specified timeout; however, the code coverage analysis time is subject-specific and it could take several hours if the generated corpus is large or the target server is slow. You can log into the running containers to check the progress if you think your experiment hangs.
 
 
+ -->
