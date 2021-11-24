@@ -7,7 +7,7 @@ After:
 The script `run_all` allows us to automatically run experiments with that subject, collect experiement results, and analyse results in one command.
 
 ## Command
-### tl;df
+### tl;dr
 
 The command for a typical experiment looks like:
 
