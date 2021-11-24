@@ -7,37 +7,12 @@ Please follow the steps below to run and collect experimental results for Exim.
 The following commands create a docker image tagged exim. The image should have everything available for fuzzing and code coverage calculation.
 
 ```bash
-cd $PFBENCH
-cd subjects/SMTP/Exim
-docker build . -t exim
+docker build --no-cache --force-rm -t exim .
 ```
+Note that the `--no-cache` and `--force-rm` are not always necesary.
+They are used here to ensure we always use the latest version of `AFLNet`, `AFLNetLegion`, etc.
 
-## Step-2. Run fuzzing
-The following commands run 4 instances of AFLNet and 4 instances of AFLnwe to simultaenously fuzz Exim in 60 minutes.
 
-```bash
-cd $PFBENCH
-mkdir results-exim
+## Step-2. Run experiments
 
-profuzzbench_exec_common.sh exim 4 results-exim aflnet out-exim-aflnet "-P SMTP -D 10000 -q 3 -s 3 -E -K -W 100" 3600 5 &
-profuzzbench_exec_common.sh exim 4 results-exim aflnwe out-exim-aflnwe "-D 10000 -K -W 100" 3600 5
-```
-
-## Step-3. Collect the results
-The following commands collect the  code coverage results produced by AFLNet and AFLnwe and save them to results.csv.
-
-```bash
-cd $PFBENCH/results-exim
-
-profuzzbench_generate_csv.sh exim 4 aflnet results.csv 0
-profuzzbench_generate_csv.sh exim 4 aflnwe results.csv 1
-```
-
-## Step-4. Analyze the results
-The results collected in step 3 (i.e., results.csv) can be used for plotting. Use the following command to plot the coverage over time and save it to a file.
-
-```
-cd $PFBENCH/results-exim
-
-profuzzbench_plot.py -i results.csv -p exim -r 4 -c 60 -s 1 -o cov_over_time.png
-```
+See [README.md](https://github.com/Alan32Liu/ProFuzzBench/tree/temp/scripts) of `run_all`
