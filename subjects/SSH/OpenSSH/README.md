@@ -1,6 +1,6 @@
 Please carefully read the [main README.md](../../../README.md), which is stored in the benchmark's root folder, before following this subject-specific guideline.
 
-# Fuzzing OpenSSH server with AFLNet and AFLNetLegion
+# Fuzzing OpenSSH server with AFLNet and AFLnwe
 Please follow the steps below to run and collect experimental results for OpenSSH.
 
 ## Step-1. Build a docker image
